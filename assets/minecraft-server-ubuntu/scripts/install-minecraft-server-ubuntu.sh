@@ -44,18 +44,8 @@ restartScript="/usr/local/bin/restart-minecraft.sh"
 # Minecraft server download URL and version
 #serverVersion='1.15.2'
 #downloadUrl="https://launcher.mojang.com/v1/objects/bb2b6b1aefcd70dfd1892149ac3a215f6c636b07/server.jar"
-#serverVersion='20w12a'
-#downloadUrl="https://launcher.mojang.com/v1/objects/3d9657a172415a163e25096942f5a4d110b984a0/server.jar"
-#serverVersion='20w13b'
-#downloadUrl="https://launcher.mojang.com/v1/objects/0e00cff8df2532a1ae252e773552c2fd6c68de80/server.jar"
-#serverVersion='20w14a'
-#downloadUrl="https://launcher.mojang.com/v1/objects/affcf966ca903156070aa90b63417793a78b2165/server.jar"
-#serverVersion='20w15a'
-#downloadUrl="https://launcher.mojang.com/v1/objects/64ca02e1e9fc7e60eac4aba788580b16eb12f71f/server.jar"
-#serverVersion='20w16a'
-#downloadUrl="https://launcher.mojang.com/v1/objects/754bbd654d8e6bd90cd7a1464a9e68a0624505dd/server.jar"
-serverVersion='20w20b'
-downloadUrl="https://launcher.mojang.com/v1/objects/0393774fb1f9db8288a56dbbcf45022b71f7939f/server.jar"
+serverVersion='1.16-pre2'
+downloadUrl="https://launcher.mojang.com/v1/objects/8daeb71269eb164097d7d7ab1fa93fc93ab125c3/server.jar"
 
 # First world server version jar directory
 firstWorldServerJarDir="${serverJarsDir}/${serverVersion}"

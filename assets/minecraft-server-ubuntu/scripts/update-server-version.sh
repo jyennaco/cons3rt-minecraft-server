@@ -26,8 +26,14 @@ serverJarsDir="${minecraftServerDir}/server_jars"
 #downloadUrl="https://launcher.mojang.com/v1/objects/0b7e36b084577fb26148c6341d590ac14606db21/server.jar"
 #serverVersion='20w19a'
 #downloadUrl="https://launcher.mojang.com/v1/objects/fbb3ad3e7b25e78723434434077995855141ff07/server.jar"
-serverVersion='20w20b'
-downloadUrl="https://launcher.mojang.com/v1/objects/0393774fb1f9db8288a56dbbcf45022b71f7939f/server.jar"
+#serverVersion='20w20b'
+#downloadUrl="https://launcher.mojang.com/v1/objects/0393774fb1f9db8288a56dbbcf45022b71f7939f/server.jar"
+#serverVersion='20w21a'
+#downloadUrl="https://launcher.mojang.com/v1/objects/03b8fa357937d0bdb6650ec8cc74506ec2fd91a7/server.jar"
+#serverVersion='20w22a'
+#downloadUrl="https://launcher.mojang.com/v1/objects/c4a62eb36917aaa06dc8e20a2a35264d5fda123b/server.jar"
+serverVersion='1.16-pre2'
+downloadUrl="https://launcher.mojang.com/v1/objects/8daeb71269eb164097d7d7ab1fa93fc93ab125c3/server.jar"
 
 # Server jar location
 serverJarDir="${serverJarsDir}/${serverVersion}"
