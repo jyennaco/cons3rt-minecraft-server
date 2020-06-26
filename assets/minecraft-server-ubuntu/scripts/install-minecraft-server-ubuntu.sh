@@ -42,10 +42,8 @@ stopScript="/usr/local/bin/stop-minecraft.sh"
 restartScript="/usr/local/bin/restart-minecraft.sh"
 
 # Minecraft server download URL and version
-#serverVersion='1.15.2'
-#downloadUrl="https://launcher.mojang.com/v1/objects/bb2b6b1aefcd70dfd1892149ac3a215f6c636b07/server.jar"
-serverVersion='1.16-pre2'
-downloadUrl="https://launcher.mojang.com/v1/objects/8daeb71269eb164097d7d7ab1fa93fc93ab125c3/server.jar"
+serverVersion="1.16.1"
+downloadUrl="https://launcher.mojang.com/v1/objects/a412fd69db1f81db3f511c1463fd304675244077/server.jar"
 
 # First world server version jar directory
 firstWorldServerJarDir="${serverJarsDir}/${serverVersion}"
