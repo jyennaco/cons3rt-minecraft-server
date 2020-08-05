@@ -9,7 +9,7 @@ if [ -f /etc/profile ] ; then
 fi
 
 # Establish a log file and log tag
-logTag="install-minecraft-server"
+logTag="install-server-version"
 logDir="/var/log/minecraft"
 logFile="${logDir}/${logTag}-$(date "+%Y%m%d-%H%M%S").log"
 
