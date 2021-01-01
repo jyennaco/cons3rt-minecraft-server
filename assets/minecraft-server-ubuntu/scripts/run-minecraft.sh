@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# DEPRECATED
+
 # Source the environment
 if [ -f /etc/bashrc ] ; then
     . /etc/bashrc
