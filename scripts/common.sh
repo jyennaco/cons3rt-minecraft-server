@@ -17,6 +17,7 @@ worldsDir="${minecraftServerDir}/worlds"
 modsDir="${minecraftServerDir}/mods"
 backupDir="${minecraftServerDir}/backups"
 scriptsDir="${minecraftServerDir}/scripts"
+logDir="${minecraftServerDir}/log"
 versionsFile="${scriptsDir}/server-versions.sh"
 awsCmd="/usr/local/bin/aws"
 slackCmd="/usr/local/bin/slack"
@@ -27,7 +28,6 @@ slackCmd="/usr/local/bin/slack"
 
 # Establish a log file and log tag
 logTag="minecraft"
-logDir="/var/log/minecraft"
 logFile="${logDir}/minecraft.log"
 
 # Logging functions

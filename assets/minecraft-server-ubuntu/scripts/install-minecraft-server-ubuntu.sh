@@ -16,36 +16,27 @@ logFile="${logDir}/${logTag}-$(date "+%Y%m%d-%H%M%S").log"
 ######################### GLOBAL VARIABLES #########################
 
 # Script dir
-scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+assetScriptsDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Management scripts
-runMinecraftScript="${scriptDir}/run-minecraft.sh"
-stopMinecraftScript="${scriptDir}/stop-minecraft.sh"
-restartMinecraftScript="${scriptDir}/restart-minecraft.sh"
-backupScript="${scriptDir}/backup-minecraft-servers.sh"
-updateScript="${scriptDir}/update-server-version.sh"
+commonScript="${assetScriptsDir}/common.sh"
+versionsScript="${assetScriptsDir}/server-versions.sh"
+. ${commonScript}
+. ${versionsScript}
 
 # Minecraft directories
 minecraftServerDir="/opt/Minecraft_Servers"
 worldsDir="${minecraftServerDir}/worlds"
-firstWorldDir="${worldsDir}/first_world"
 serverJarsDir="${minecraftServerDir}/server_jars"
+modsDir="${minecraftServerDir}/mods"
+scriptsDir="${minecraftServerDir}/scripts"
+backupsDir="${minecraftServerDir}/backups"
 
 # Config file for selecting a minecraft world
 configFile="${minecraftServerDir}/config.sh"
 
-# Default world directory
-
-# Service script locations
-serviceScript="/usr/local/bin/run-minecraft.sh"
-stopScript="/usr/local/bin/stop-minecraft.sh"
-restartScript="/usr/local/bin/restart-minecraft.sh"
-
-# Minecraft server download URL and version
-serverVersion="1.16.1"
-downloadUrl="https://launcher.mojang.com/v1/objects/a412fd69db1f81db3f511c1463fd304675244077/server.jar"
-
-# First world server version jar directory
+# First world server version jar directory using the latest release
+firstWorldDir="${worldsDir}/first_world"
 firstWorldServerJarDir="${serverJarsDir}/${serverVersion}"
 firstWorldServerJar="${firstWorldServerJarDir}/server.jar"
 
@@ -73,8 +64,9 @@ function install_java() {
     apt-get -y install software-properties-common >> $logFile 2>&1
     if [ $? -ne 0 ]; then logErr "Problem installing: software-properties-common"; return 1; fi
     logInfo "Installing Java..."
-    apt-get -y install openjdk-8-jdk-headless >> $logFile 2>&1
-    if [ $? -ne 0 ]; then logErr "Problem installing: openjdk-8-jdk-headless"; return 1; fi
+    #apt-get -y install openjdk-8-jdk-headless >> $logFile 2>&1
+    apt -y install default-jdk >> ${logFile} 2>&1
+    if [ $? -ne 0 ]; then logErr "Problem installing java"; return 1; fi
     logInfo "Completed installing Java! :D"
     return 0
 }

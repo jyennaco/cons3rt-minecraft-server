@@ -16,6 +16,7 @@ serverDownloadUrls['1.16-pre8']='https://launcher.mojang.com/v1/objects/d6a74737
 serverDownloadUrls['1.16-rc1']='https://launcher.mojang.com/v1/objects/7213e5ba8fe8d352141cf3dde907c26c43480092/server.jar'
 serverDownloadUrls['20w48a']='https://launcher.mojang.com/v1/objects/d1551eed659a023a0a73137282397a78b0dda261/server.jar'
 serverDownloadUrls['20w51a']='https://launcher.mojang.com/v1/objects/fc87ef4c3cf1c815809249cc00ccade233b22cf5/server.jar'
+serverDownloadUrls['21w44a']='https://launcher.mojang.com/v1/objects/ae583fd57a8c07f2d6fbadce1ce1e1379bf4b32d/server.jar'
 
 
 # Releases
@@ -23,10 +24,13 @@ serverDownloadUrls['1.16.1']='https://launcher.mojang.com/v1/objects/a412fd69db1
 serverDownloadUrls['1.16.2']='https://launcher.mojang.com/v1/objects/c5f6fb23c3876461d46ec380421e42b289789530/server.jar'
 serverDownloadUrls['1.16.3']='https://launcher.mojang.com/v1/objects/f02f4473dbf152c23d7d484952121db0b36698cb/server.jar'
 serverDownloadUrls['1.16.4']='https://launcher.mojang.com/v1/objects/35139deedbd5182953cf1caa23835da59ca3d7cd/server.jar'
+serverDownloadUrls['1.16.5']='https://launcher.mojang.com/v1/objects/1b557e7b033b583cd9f66746b7a9ab1ec1673ced/server.jar'
+serverDownloadUrls['1.17.1']='https://launcher.mojang.com/v1/objects/a16d67e5807f57fc4e550299cf20226194497dc2/server.jar'
+
 
 # Latest versions
-latestSnapshot='20w51a'
-latestRelease='1.16.4'
+latestSnapshot='21w44a'
+latestRelease='1.17.1'
 
 # Latest download URLs
 latestSnapshotDownloadUrl="${serverDownloadUrls[${latestSnapshot}]}"
