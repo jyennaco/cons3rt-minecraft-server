@@ -1,6 +1,9 @@
 FROM debian:latest
 USER root
 
+ENV MINECRAFT_VERSION=21w44a
+ENV SERVER_DOWNLOAD_URL=https://launcher.mojang.com/v1/objects/ae583fd57a8c07f2d6fbadce1ce1e1379bf4b32d/server.jar
+
 # Minecraft directories
 ENV minecraftServerDir=/opt/Minecraft_Servers
 ENV worldsDir=$minecraftServerDir/worlds
@@ -15,7 +18,7 @@ ENV logDir=$minecraftServerDir/log
 # Upgrade and install packages
 RUN apt-get -y update \
     && apt-get -y upgrade \
-    && apt -y install curl software-properties-common openjdk-17-jre screen \
+    && apt -y install curl software-properties-common openjdk-17-jre screen unzip \
     && mkdir -p $scriptsDir
 
 # Stage the entrypoint and management scripts
@@ -55,11 +58,11 @@ USER minecraft
 
 WORKDIR $minecraftServerDir/
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["/usr/local/bin/start-server.sh world"]
+CMD ["/usr/local/bin/start-server.sh"]
 
 # Build
 # docker build -t minecraft:1.17.1 .
 
 # Run and mount a world directory
-# docker run -it --detach -v ~/Downloads/world:/opt/Minecraft_Servers/worlds/world -p 25565:25565 --name world1 minecraft:1.17.1
+# docker run -it --detach -v ~/Downloads/world:/opt/Minecraft_Servers/worlds/world -v ~/.aws:/home/minecraft/.aws -p 25565:25565 --name world1 minecraft:1.17.1
 

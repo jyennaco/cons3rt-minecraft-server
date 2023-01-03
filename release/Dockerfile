@@ -1,6 +1,9 @@
 FROM debian:latest
 USER root
 
+ENV MINECRAFT_VERSION=1.17.1
+ENV SERVER_DOWNLOAD_URL=https://launcher.mojang.com/v1/objects/a16d67e5807f57fc4e550299cf20226194497dc2/server.jar
+
 # Minecraft directories
 ENV minecraftServerDir=/opt/Minecraft_Servers
 ENV worldsDir=$minecraftServerDir/worlds
