@@ -30,6 +30,7 @@ sourceScriptsDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Management scripts
 backupScript="${sourceScriptsDir}/backup-minecraft-servers.sh"
 commonScript="${sourceScriptsDir}/common.sh"
+javaScript="${sourceScriptsDir}/downloadJava.sh"
 installServerVersionScript="${sourceScriptsDir}/install-server-version.sh"
 restartScript="${sourceScriptsDir}/restart-server.sh"
 startScript="${sourceScriptsDir}/start-server.sh"
@@ -43,14 +44,17 @@ serverJarsDir="${minecraftServerDir}/server_jars"
 modsDir="${minecraftServerDir}/mods"
 scriptsDir="${minecraftServerDir}/scripts"
 backupsDir="${minecraftServerDir}/backups"
+minecraftLogDir="${minecraftServerDir}/log"
 firstWorldDir="${worldsDir}/first_world"
-
 
 # Config file for selecting a minecraft world
 configFile="${minecraftServerDir}/config.sh"
 
 # First world server jar
 firstWorldServerJar=
+
+# First world server version
+serverVersionFile=
 
 # Set the download URL to the latestReleaseDownloadUrl by default
 downloadUrl=
@@ -67,7 +71,12 @@ function verify_prerequisites() {
     if [ ! -f ${startScript} ]; then logErr "Script not found: ${startScript}"; return 1; fi
     if [ ! -f ${stopScript} ]; then logErr "Script not found: ${stopScript}"; return 1; fi
     if [ ! -f ${versionsScript} ]; then logErr "Script not found: ${versionsScript}"; return 1; fi
+    logInfo "All prerequisites verified!"
+    return 0
+}
 
+function setup_params() {
+    logInfo "Setting up parameters..."
     # Source the common and versions scripts
     . ${commonScript}
     . ${versionsScript}
@@ -75,26 +84,30 @@ function verify_prerequisites() {
     # Set the download URL
     downloadUrl="${latestReleaseDownloadUrl}"
 
+    # Ensure the download and latest release are set
     if [ -z "${downloadUrl}" ]; then logErr "The download URL was not set"; return 1; fi
     if [ -z "${latestRelease}" ]; then logErr "The latest release was not found"; return 1; fi
     logInfo "Using latest release version: ${latestRelease}"
     logInfo "Using download URL: ${downloadUrl}"
 
     firstWorldServerJarDir="${serverJarsDir}/${latestRelease}"
+    firstWorldServerJar="${firstWorldServerJarDir}/server.jar"
     logInfo "Using first world server release directory: ${firstWorldServerJarDir}"
-    logInfo "All prerequisites verified!"
+    mkdir -p ${firstWorldServerJarDir} >> ${logFile} 2>&1
+
+    # Create the server-version.sh file in the first world directory
+    serverVersionFile="${firstWorldDir}/server-version.sh"
+    logInfo "Creating server version file: ${serverVersionFile}"
+    echo "SERVER_VERSION=${latestRelease}" > ${serverVersionFile}
     return 0
 }
 
 function install_java() {
-    logInfo "I am installing java and prerequisites for Ubuntu..."
-    apt-get -y install software-properties-common >> ${logFile} 2>&1
-    if [ $? -ne 0 ]; then logErr "Problem installing: software-properties-common"; return 1; fi
-    logInfo "Installing Java..."
-    apt -y install default-jdk >> ${logFile} 2>&1
-    if [ $? -ne 0 ]; then logErr "Problem installing java"; return 1; fi
-    logInfo "Completed installing Java! :D"
-    return 0
+    logInfo "Installing java for Ubuntu using script ${scriptsDir}/downloadJava.sh"
+    bash ${scriptsDir}/downloadJava.sh >> ${logFile} 2>&1
+    if [ $? -ne 0 ]; then logErr "Problem running java script: ${scriptsDir}/downloadJava.sh"; return 1; fi
+    . /etc/profile.d/java.sh
+    return $?
 }
 
 function install_screen() {
@@ -121,9 +134,14 @@ function create_directories() {
     mkdir -p ${modsDir} >> ${logFile} 2>&1
     mkdir -p ${scriptsDir} >> ${logFile} 2>&1
     mkdir -p ${backupsDir} >> ${logFile} 2>&1
+    mkdir -p ${minecraftLogDir} >> ${logFile} 2>&1
     mkdir -p ${firstWorldDir} >> ${logFile} 2>&1
-    mkdir -p ${firstWorldServerJarDir} >> ${logFile} 2>&1
     logInfo "Finished creating directories"
+    
+    # Set up the minecraft.log file
+    logInfo "Creating log file: ${minecraftLogDir}/minecraft.log"
+    touch ${minecraftLogDir}/minecraft.log
+    
     return 0
 }
 
@@ -150,15 +168,6 @@ function download_minecraft_server() {
     if [ ! -f server.jar ]; then logErr "server.jar file not found"; return 1; fi
     cd -
     logInfo "Minecraft server download complete: ${firstWorldServerJar}"
-    return 0
-}
-
-function accept_eula() {
-    logInfo "Running the Minecraft server to accept the EULA..."
-    cd ${firstWorldDir}
-    timeout 20s java -Xmx1024M -Xms1024M -jar ${firstWorldServerJar} nogui >> ${logFile} 2>&1
-    if [ ! -f ${firstWorldDir}/eula.txt ]; then logErr "${firstWorldDir}/eula.txt not found"; return 1; fi
-    sed -i "s|eula=false|eula=true|g" ${firstWorldDir}/eula.txt
     return 0
 }
 
@@ -244,9 +253,9 @@ function run_minecraft_service() {
     if [ $? -ne 0 ]; then logErr "Problem accepting the EULA"; return 1; fi
     config_minecraft_service
     logInfo "Starting and enabling the minecraft.service..."
-    logInfo "Setting permissions on: $minecraftServerDir"
-    chown -R minecraft:minecraft $minecraftServerDir
-    chown -R minecraft:minecraft $logDir
+    logInfo "Setting permissions on: ${minecraftServerDir}"
+    chown -R minecraft:minecraft ${minecraftServerDir}
+    chown -R minecraft:minecraft ${minecraftLogDir}
     systemctl enable minecraft.service >> ${logFile} 2>&1
     if [ $? -ne 0 ]; then logErr "Problem enabling minecraft.service"; return 1; fi
     systemctl start minecraft.service >> ${logFile} 2>&1
@@ -259,19 +268,36 @@ function install_management_scripts() {
     cp -f ${backupScript} ${scriptsDir}/ >> ${logFile} 2>&1
     if [ $? -ne 0 ]; then logErr "Problem staging backup script: ${backupScript} to ${scriptsDir}"; return 1; fi
     cp -f ${commonScript} ${scriptsDir}/ >> ${logFile} 2>&1
-    if [ $? -ne 0 ]; then logErr "Problem staging backup script: ${commonScript} to ${scriptsDir}"; return 1; fi
+    if [ $? -ne 0 ]; then logErr "Problem staging common script: ${commonScript} to ${scriptsDir}"; return 1; fi
     cp -f ${installServerVersionScript} ${scriptsDir}/ >> ${logFile} 2>&1
-    if [ $? -ne 0 ]; then logErr "Problem staging backup script: ${installServerVersionScript} to ${scriptsDir}"; return 1; fi
+    if [ $? -ne 0 ]; then logErr "Problem staging install versions script: ${installServerVersionScript} to ${scriptsDir}"; return 1; fi
+    cp -f ${javaScript} ${scriptsDir}/ >> ${logFile} 2>&1
+    if [ $? -ne 0 ]; then logErr "Problem staging java script: ${javaScript} to ${scriptsDir}"; return 1; fi
     cp -f ${restartScript} ${scriptsDir}/ >> ${logFile} 2>&1
-    if [ $? -ne 0 ]; then logErr "Problem staging backup script: ${restartScript} to ${scriptsDir}"; return 1; fi
+    if [ $? -ne 0 ]; then logErr "Problem staging restart script: ${restartScript} to ${scriptsDir}"; return 1; fi
     cp -f ${startScript} ${scriptsDir}/ >> ${logFile} 2>&1
-    if [ $? -ne 0 ]; then logErr "Problem staging backup script: ${startScript} to ${scriptsDir}"; return 1; fi
+    if [ $? -ne 0 ]; then logErr "Problem staging start script: ${startScript} to ${scriptsDir}"; return 1; fi
     cp -f ${stopScript} ${scriptsDir}/ >> ${logFile} 2>&1
-    if [ $? -ne 0 ]; then logErr "Problem staging backup script: ${stopScript} to ${scriptsDir}"; return 1; fi
+    if [ $? -ne 0 ]; then logErr "Problem staging stop script: ${stopScript} to ${scriptsDir}"; return 1; fi
     cp -f ${versionsScript} ${scriptsDir}/ >> ${logFile} 2>&1
-    if [ $? -ne 0 ]; then logErr "Problem staging backup script: ${versionsScript} to ${scriptsDir}"; return 1; fi
+    if [ $? -ne 0 ]; then logErr "Problem staging versions script: ${versionsScript} to ${scriptsDir}"; return 1; fi
     logInfo "Completed installing management script to: ${scriptsDir}"
+    logInfo "Setting permissions on: ${scriptsDir}"
+    chmod +x ${scriptsDir}/* >> ${logFile} 2>&1
+    if [ $? -ne 0 ]; then logErr "Problem setting permissions on scripts in directory: ${scriptsDir}"; return 1; fi
     return 0
+}
+
+function set_permissions() {
+    logInfo "Setting permissions: ${minecraftServerDir}"
+    chown -R minecraft:minecraft ${minecraftServerDir} >> ${logFile} 2>&1
+    return $?
+}
+
+function start_first_world() {
+    logInfo "Starting the first world: ${firstWorldDir}..."
+    runuser -l minecraft -c "${scriptsDir}/start-server.sh ${firstWorldDir}"
+    return $?
 }
 
 function main() {
@@ -288,14 +314,18 @@ function main() {
     if [ $? -ne 0 ]; then logErr "Problem installing screen"; return 5; fi
     create_minecraft_users
     if [ $? -ne 0 ]; then logErr "Problem creating the minecraft user"; return 6; fi
+    setup_params
+    if [ $? -ne 0 ]; then logErr "Problem creating the minecraft user"; return 7; fi
     create_config_file
-    if [ $? -ne 0 ]; then logErr "Problem creating config file"; return 7; fi
+    if [ $? -ne 0 ]; then logErr "Problem creating config file"; return 8; fi
     download_minecraft_server
-    if [ $? -ne 0 ]; then logErr "Problem downloading minecraft server"; return 8; fi
-    accept_eula
-    if [ $? -ne 0 ]; then logErr "Problem accepting the eula"; return 9; fi
-    #run_minecraft_service
-    #if [ $? -ne 0 ]; then logErr "Problem running minecraft service"; return 6; fi
+    if [ $? -ne 0 ]; then logErr "Problem downloading minecraft server"; return 9; fi
+    accept_eula "${firstWorldDir}" "${firstWorldServerJar}"
+    if [ $? -ne 0 ]; then logErr "Problem accepting the eula"; return 10; fi
+    set_permissions
+    if [ $? -ne 0 ]; then logErr "Problem accepting the eula"; return 11; fi
+    start_first_world
+    if [ $? -ne 0 ]; then logErr "Problem starting the first world"; return 12; fi
     logInfo "Successfully completed: ${logTag}"
     logInfo "GO PLAY SOME MINECRAFT!!!!"
     return 0

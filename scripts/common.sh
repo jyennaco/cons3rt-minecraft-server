@@ -21,6 +21,7 @@ logDir="${minecraftServerDir}/log"
 versionsFile="${scriptsDir}/server-versions.sh"
 awsCmd="/usr/local/bin/aws"
 slackCmd="/usr/local/bin/slack"
+javaExe='/opt/java/jre/bin/java'
 . ${configFile}
 . ${versionsFile}
 
@@ -61,7 +62,6 @@ function accept_eula() {
 
 function install_forge() {
     logTag="install_forge"
-    javaExe='/usr/bin/java'
     worldDir="${1}"
     serverVersion="${2}"
     serverConfigFile="${worldDir}/server-version.sh"
@@ -137,7 +137,6 @@ function install_forge() {
 
 function start_minecraft_server() {
     logTag="start_minecraft_server"
-    javaExe='/usr/bin/java'
     screenExe='/usr/bin/screen'
     xmxConfig='-Xmx1024M'
     xmsConfig='-Xms1024M'
