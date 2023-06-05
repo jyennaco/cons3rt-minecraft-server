@@ -17,7 +17,9 @@ serverDownloadUrls['1.16-rc1']='https://launcher.mojang.com/v1/objects/7213e5ba8
 serverDownloadUrls['20w48a']='https://launcher.mojang.com/v1/objects/d1551eed659a023a0a73137282397a78b0dda261/server.jar'
 serverDownloadUrls['20w51a']='https://launcher.mojang.com/v1/objects/fc87ef4c3cf1c815809249cc00ccade233b22cf5/server.jar'
 serverDownloadUrls['21w44a']='https://launcher.mojang.com/v1/objects/ae583fd57a8c07f2d6fbadce1ce1e1379bf4b32d/server.jar'
-
+serverDownloadUrls['23w07a']='https://piston-data.mojang.com/v1/objects/b919e6e1683a4b6f37f2717c7841e88e306bdc94/server.jar'
+serverDownloadUrls['23w16a']='https://piston-data.mojang.com/v1/objects/4a8487f877eb4f3506978fb85faf41a08b570398/server.jar'
+serverDownloadUrls['23w18a']='https://piston-data.mojang.com/v1/objects/240177c763b6009ea81aaf0ef14a73822320856d/server.jar'
 
 # Releases
 serverDownloadUrls['1.16.1']='https://launcher.mojang.com/v1/objects/a412fd69db1f81db3f511c1463fd304675244077/server.jar'
@@ -26,11 +28,11 @@ serverDownloadUrls['1.16.3']='https://launcher.mojang.com/v1/objects/f02f4473dbf
 serverDownloadUrls['1.16.4']='https://launcher.mojang.com/v1/objects/35139deedbd5182953cf1caa23835da59ca3d7cd/server.jar'
 serverDownloadUrls['1.16.5']='https://launcher.mojang.com/v1/objects/1b557e7b033b583cd9f66746b7a9ab1ec1673ced/server.jar'
 serverDownloadUrls['1.17.1']='https://launcher.mojang.com/v1/objects/a16d67e5807f57fc4e550299cf20226194497dc2/server.jar'
-
+serverDownloadUrls['1.19.4']='https://piston-data.mojang.com/v1/objects/8f3112a1049751cc472ec13e397eade5336ca7ae/server.jar'
 
 # Latest versions
-latestSnapshot='21w44a'
-latestRelease='1.17.1'
+latestSnapshot='23w18a'
+latestRelease='1.19.4'
 
 # Latest download URLs
 latestSnapshotDownloadUrl="${serverDownloadUrls[${latestSnapshot}]}"
