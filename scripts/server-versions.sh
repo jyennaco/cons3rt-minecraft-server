@@ -29,10 +29,11 @@ serverDownloadUrls['1.16.4']='https://launcher.mojang.com/v1/objects/35139deedbd
 serverDownloadUrls['1.16.5']='https://launcher.mojang.com/v1/objects/1b557e7b033b583cd9f66746b7a9ab1ec1673ced/server.jar'
 serverDownloadUrls['1.17.1']='https://launcher.mojang.com/v1/objects/a16d67e5807f57fc4e550299cf20226194497dc2/server.jar'
 serverDownloadUrls['1.19.4']='https://piston-data.mojang.com/v1/objects/8f3112a1049751cc472ec13e397eade5336ca7ae/server.jar'
+serverDownloadUrls['1.20.0']='https://piston-data.mojang.com/v1/objects/15c777e2cfe0556eef19aab534b186c0c6f277e1/server.jar'
 
 # Latest versions
 latestSnapshot='23w18a'
-latestRelease='1.19.4'
+latestRelease='1.20.0'
 
 # Latest download URLs
 latestSnapshotDownloadUrl="${serverDownloadUrls[${latestSnapshot}]}"
