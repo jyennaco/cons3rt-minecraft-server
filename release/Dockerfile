@@ -1,8 +1,8 @@
 FROM debian:latest
 USER root
 
-ENV MINECRAFT_VERSION=1.17.1
-ENV SERVER_DOWNLOAD_URL=https://launcher.mojang.com/v1/objects/a16d67e5807f57fc4e550299cf20226194497dc2/server.jar
+ENV MINECRAFT_VERSION=1.20.1
+ENV SERVER_DOWNLOAD_URL=https://piston-data.mojang.com/v1/objects/84194a2f286ef7c14ed7ce0090dba59902951553/server.jar
 
 # Minecraft directories
 ENV minecraftServerDir=/opt/Minecraft_Servers
@@ -18,7 +18,7 @@ ENV logDir=$minecraftServerDir/log
 # Upgrade and install packages
 RUN apt-get -y update \
     && apt-get -y upgrade \
-    && apt -y install curl software-properties-common openjdk-17-jre screen \
+    && apt -y install curl software-properties-common screen tmux \
     && mkdir -p $scriptsDir
 
 # Stage the entrypoint and management scripts

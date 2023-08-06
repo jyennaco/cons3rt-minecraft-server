@@ -261,7 +261,7 @@ function install_server_version() {
         rm -f server.jar  >> ${logFile} 2>&1
     fi
     logInfo "Downloading minecraft server using download URL: ${downloadUrl}"
-    curl -O ${downloadUrl} >> ${logFile} 2>&1
+    curl -o server.jar ${downloadUrl} >> ${logFile} 2>&1
     if [ $? -ne 0 ]; then logErr "Problem downloading minecraft server from URL: ${downloadUrl}"; return 1; fi
     if [ ! -f server.jar ]; then logErr "server.jar file not found"; return 1; fi
     cd -
