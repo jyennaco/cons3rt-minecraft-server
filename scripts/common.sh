@@ -41,22 +41,38 @@ function logErr() { /bin/echo -e "$(timestamp) ${logTag} [ERROR]: ${1}" >> ${log
 function accept_eula() {
     logTag="accept_eula"
     worldDir="${1}"
-    serverJar="${2}"
+    #serverJar="${2}"
     if [ -z "${worldDir}" ]; then logErr "World directory not provided"; return 1; fi
-    if [ -z "${serverJar}" ]; then logErr "Server jar not provided"; return 1; fi
+    #if [ -z "${serverJar}" ]; then logErr "Server jar not provided"; return 1; fi
     if [ ! -d ${worldDir} ]; then logErr "World directory not found: ${worldDir}"; return 1; fi
-    if [ ! -f ${serverJar} ]; then logErr "Server jar file not found: ${serverJar}"; return 1; fi
-    if [ ! -f ${worldDir}/eula.txt ]; then
-        logInfo "Running the Minecraft server jar ${serverJar} to accept the EULA in world directory: ${worldDir}"
-        cd ${worldDir}
-        timeout 20s java -Xmx1024M -Xms1024M -jar ${serverJar} nogui >> ${logFile} 2>&1
-        if [ ! -f ${worldDir}/eula.txt ]; then logErr "${worldDir}/eula.txt not found"; return 1; fi
-        cd -
-    else
-        logInfo "eula.txt file found, no need to re-generate..."
+    #if [ ! -f ${serverJar} ]; then logErr "Server jar file not found: ${serverJar}"; return 1; fi
+
+    # TODO remove when no longer needed, the odl way of accepting the EULA
+    #if [ ! -f ${worldDir}/eula.txt ]; then
+    #    logInfo "Running the Minecraft server jar ${serverJar} to accept the EULA in world directory: ${worldDir}"
+    #    cd ${worldDir}
+    #    timeout 20s java -Xmx1024M -Xms1024M -jar ${serverJar} nogui >> ${logFile} 2>&1
+    #    if [ ! -f ${worldDir}/eula.txt ]; then logErr "${worldDir}/eula.txt not found"; return 1; fi
+    #    cd -
+    #else
+    #    logInfo "eula.txt file found, no need to re-generate..."
+    #fi
+    #sed -i "s|eula=false|eula=true|g" ${worldDir}/eula.txt
+
+    # Remove existing eula.txt file
+    if [ -f ${worldDir}/eula.txt ]; then
+        logInfo "Removing existing EULA file: ${worldDir}/eula.txt"
+        rm -f ${worldDir}/eula.txt
     fi
-    sed -i "s|eula=false|eula=true|g" ${worldDir}/eula.txt
-    logInfo "eula accepted for server jar ${serverJar} in world: ${worldDir}"
+
+cat << EOF >> "${worldDir}/eula.txt"
+#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://aka.ms/MinecraftEULA).
+#$(date)
+eula=true
+
+EOF
+
+    logInfo "eula accepted for world: ${worldDir}"
     return 0
 }
 
