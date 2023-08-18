@@ -120,9 +120,23 @@ function create_minecraft_users() {
     logInfo "Creating users: minecraft mcbackup"
     create_user "minecraft"
     if [ $? -ne 0 ]; then logErr "Problem creating user: minecraft"; return 1; fi
-    create_user "mcbackup"
-    if [ $? -ne 0 ]; then logErr "Problem creating user: mcbackup"; return 1; fi
-    logInfo "Created users: minecraft mcbackup"
+    #create_user "mcbackup"
+    #if [ $? -ne 0 ]; then logErr "Problem creating user: mcbackup"; return 1; fi
+
+    # Configure the minecraft user to run as a service and rootless
+    logInfo "Configuring rootless for the minecraft user..."
+    loginctl enable-linger minecraft
+    mkdir -p /run/user/$(id -u minecraft)
+    mkdir -p /var/user/minecraft/tmp
+    chown -R minecraft:minecraft /run/user/$(id -u minecraft)
+    chown -R minecraft:minecraft /var/user/minecraft
+
+    # Add variables to ~/.profile
+    logInfo "Adding variables to: /home/minecraft/.profile"
+    echo 'export XDG_RUNTIME_DIR=/run/user/$(id -u)' >> /home/minecraft/.profile
+    echo 'export TMPDIR=/var/user/$(whoami)/tmp' >> /home/minecraft/.profile
+
+    logInfo "Created minecraft users"
     return 0
 }
 
