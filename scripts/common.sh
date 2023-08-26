@@ -81,9 +81,24 @@ EOF
 }
 
 function check_for_running_server() {
-    logInfo "Checking for a running server..."
-    logInfo "Completed checking for running server"
-    return 0
+    # Return 0 if running server not found
+    # Return 1 if running server found
+    logTag="check_for_running_server"
+    worldName="${1}"
+    screenName="minecraft_${worldName}"
+
+    if [ -z "${worldName}" ]; then logErr "Please provide a world name arg"; return 1; fi
+
+    logInfo "Checking for a running server: ${worldname}"
+
+    minecraftScreenSession=$(screen -list | grep 'Detached' | grep "${screenName}")
+    if [ -z "${minecraftScreenSession}" ]; then
+        logInfo "Minecraft server not running: ${screenName}"
+        return 0
+    fi
+
+    logInfo "Found running server: ${minecraftScreenSession}"
+    return 1
 }
 
 function create_new_world() {
@@ -169,12 +184,6 @@ function install_forge() {
 
     # Ensure the vanilla minecraft server jar exists
     if [ ! -f ${minecraftServerJar} ]; then logErr "Minecraft world server jar not found: ${minecraftServerJar}, please run install-server-version.sh ${VANILLA_VERSION}"; return 1; fi
-
-    # Copy the minecraft server jar to the world directory (forge likes everything together in the same directory)
-    # TODO delete this if not needed
-    #logInfo "Copying minecraft server jar [${minecraftServerJar}] to world directory: ${worldDir}"
-    #cp -f ${minecraftServerJar} ${worldDir}/ >> ${logFile} 2>&1
-    #if [ $? -ne 0 ]; then logErr "Problem copying minecraft server jar [${minecraftServerJar}] to world directory: ${worldDir}"; return 1; fi
 
     # Run the forge installer from the world directory
     cd ${worldDir}/
@@ -286,7 +295,9 @@ function start_minecraft_server() {
     # Install mods
     logInfo "Installing mods if any are configured..."
     install_mods "${worldName}"
-    if [ $? -ne 0 ]; then logErr "Problem installing mods for world: ${worldName}"; return 1; fi
+    modRes=$?
+    logTag="start_minecraft_server"
+    if [ ${modRes} -ne 0 ]; then logErr "Problem installing mods for world: ${worldName}"; return 1; fi
 
     if [[ "${MOD_FRAMEWORK}" == "forge" ]]; then
         logInfo "This is a forge server..."
@@ -322,8 +333,13 @@ function start_minecraft_server() {
     sleep 10s
 
     # Check for running server
-    # TODO
-
+    check_for_running_server "${worldName}"
+    res=$?
+    logTag="start_minecraft_server"
+    if [ ${res} -eq 0 ]; then
+        logErr "Server not started: ${worldName}"
+        return 1
+    fi
     logInfo "Completed starting world: ${worldName}"
     return 0
 }
