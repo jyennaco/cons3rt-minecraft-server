@@ -7,6 +7,9 @@ fi
 if [ -f /etc/profile ] ; then
     . /etc/profile
 fi
+if [ -f /usr/local/bashcons3rt/bash_cons3rt.sh ] ; then
+    . /usr/local/bashcons3rt/bash_cons3rt.sh
+fi
 
 ######################### GLOBAL VARIABLES #########################
 
@@ -22,6 +25,7 @@ versionsFile="${scriptsDir}/server-versions.sh"
 awsCmd="/usr/local/bin/aws"
 slackCmd="/usr/local/bin/slack"
 javaExe='/opt/java/jre/bin/java'
+java11Exe='/opt/java/jre11/bin/java'
 . ${configFile}
 . ${versionsFile}
 
@@ -47,7 +51,7 @@ function accept_eula() {
     if [ ! -d ${worldDir} ]; then logErr "World directory not found: ${worldDir}"; return 1; fi
     #if [ ! -f ${serverJar} ]; then logErr "Server jar file not found: ${serverJar}"; return 1; fi
 
-    # TODO remove when no longer needed, the odl way of accepting the EULA
+    # TODO remove when no longer needed, the old way of accepting the EULA
     #if [ ! -f ${worldDir}/eula.txt ]; then
     #    logInfo "Running the Minecraft server jar ${serverJar} to accept the EULA in world directory: ${worldDir}"
     #    cd ${worldDir}
@@ -76,55 +80,141 @@ EOF
     return 0
 }
 
+function check_for_running_server() {
+    logInfo "Checking for a running server..."
+    logInfo "Completed checking for running server"
+    return 0
+}
+
+function create_new_world() {
+    logTag="create_new_world"
+    worldName="${1}"
+    worldDir="${worldsDir}/${worldName}"
+    serverConfigFile="${worldDir}/yennacraft.config.sh"
+    sampleConfigFile="${scriptsDir}/sample-yennacraft.config.sh"
+
+    if [ -z "${worldName}" ]; then logErr "Please provide a world name arg"; return 1; fi
+
+    # Create the world directory
+    logInfo "Creating new world: ${worldName}"
+    mkdir -p ${worldDir} >> ${logFile} 2>&1
+    if [ $? -ne 0 ]; then logErr "Problem creating world directory: ${worldDir}"; return 1; fi
+
+    # Ensure the sample config file exists
+    if [ ! -f ${sampleConfigFile} ]; then logErr "Sample config file not found: ${sampleConfigFile}"; return 1; fi
+
+    # Create the sample config file
+    logInfo "Staging a sample config file to: ${serverConfigFile}"
+    cp -f ${sampleConfigFile} ${serverConfigFile} >> ${logFile} 2>&1
+    if [ $? -ne 0 ]; then logErr "Problem creating staging server config file: ${serverConfigFile}"; return 1; fi
+
+    logInfo "!!! Customize your world first here: ${serverConfigFile}"
+
+    logInfo "Finished creating new world: ${worldName}"
+    return 0
+}
+
+function erase_world() {
+    logTag="erase_world"
+    worldName="${1}"
+    worldDir="${worldsDir}/${worldName}"
+
+    if [ -z "${worldName}" ]; then logErr "Please provide a world name arg"; return 1; fi
+
+    logInfo "Erasing world: ${worldName}"
+    cd ${worldDir}
+    itemsToDelete=( $(ls | grep -v yennacraft.config.sh) )
+
+    # Delete items
+    for item in "${itemsToDelete[@]}"; do
+        logInfo "Deleting item: ${item}"
+        itemPath="${worldDir}/${item}"
+        rm -Rf ${itemPath} >> ${logFile} 2>&1
+        if [ $? -ne 0 ]; then logErr "Problem deleting item: ${itemPath}"; return 1; fi
+    done
+    logInfo "Completed erasing world: ${worldName}"
+    return 0
+}
+
 function install_forge() {
     logTag="install_forge"
-    worldDir="${1}"
-    serverVersion="${2}"
-    serverConfigFile="${worldDir}/server-version.sh"
-    forgeInstallerFileName="${serverVersion}-installer.jar"
-    forgeInstaller="${serverJarsDir}/${serverVersion}/${forgeInstallerFileName}"
+    worldName="${1}"
+    worldDir="${worldsDir}/${worldName}"
+    serverConfigFile="${worldDir}/yennacraft.config.sh"
 
+    logInfo "Sourcing Minecraft world version file: ${serverConfigFile}"
+    . ${serverConfigFile}
+
+    # Ensure SERVER_VERSION is set
+    if [ -z "${SERVER_VERSION}" ]; then logErr "SERVER_VERSION variable not set"; return 1; fi
+    if [ -z "${VANILLA_VERSION}" ]; then logErr "VANILLA_VERSION variable not set"; return 1; fi
+
+    # Determine the forge installer file name and install destination in the world directory
+    forgeInstallerFileName="${SERVER_VERSION}-installer.jar"
+    forgeInstallerDestination="${worldDir}/${forgeInstallerFileName}"
+
+    # Determine the path to the forge installer jar file (it will be called server.jar due to how they download)
+    forgeInstaller="${serverJarsDir}/${SERVER_VERSION}/server.jar"
+
+    # Ensure the forge installer exists
     if [ ! -f ${forgeInstaller} ]; then logErr "Forge installer file not found: ${forgeInstaller}"; return 1; fi
 
     # Copy the forge installer
-    logInfo "Copying forge installer [${forgeInstaller}] to world directory: ${worldDir}"
-    cp -f ${forgeInstaller} ${worldDir}/ >> ${logFile} 2>&1
-    if [ $? -ne 0 ]; then logErr "Problem copying forge installer [${forgeInstaller}] to world directory: ${worldDir}"; return 1; fi
+    logInfo "Copying forge installer [${forgeInstaller}] to world directory: ${forgeInstallerDestination}"
+    cp -f ${forgeInstaller} ${forgeInstallerDestination} >> ${logFile} 2>&1
+    if [ $? -ne 0 ]; then logErr "Problem copying forge installer [${forgeInstaller}] to world directory: ${forgeInstallerDestination}"; return 1; fi
 
-    # Determine the main minecraft version and find the server har
-    minecraftVersion=$(echo "${serverVersion}" | awk -F - '{print $2}')
-    if [ -z "${minecraftVersion}" ]; then logErr "Unable to determine the minecraft version from forge version: ${serverVersion}"; return 1; fi
-    logInfo "Found minecraft version: ${minecraftVersion}"
-    minecraftServerJar="${serverJarsDir}/${minecraftVersion}/server.jar"
-    if [ ! -f ${minecraftServerJar} ]; then logErr "Minecraft world server jar not found: ${minecraftServerJar}"; return 1; fi
+    # Determine the path to the vanilla minecraft server jar
+    minecraftServerJar="${serverJarsDir}/${VANILLA_VERSION}/server.jar"
 
-    # Copy the server jar to the work directory (forge likes everything together)
-    logInfo "Copying minecraft server jar [${minecraftServerJar}] to world directory: ${worldDir}"
-    cp -f ${minecraftServerJar} ${worldDir}/ >> ${logFile} 2>&1
-    if [ $? -ne 0 ]; then logErr "Problem copying minecraft server jar [${minecraftServerJar}] to world directory: ${worldDir}"; return 1; fi
+    # Ensure the vanilla minecraft server jar exists
+    if [ ! -f ${minecraftServerJar} ]; then logErr "Minecraft world server jar not found: ${minecraftServerJar}, please run install-server-version.sh ${VANILLA_VERSION}"; return 1; fi
 
-    # Run the forge installer
+    # Copy the minecraft server jar to the world directory (forge likes everything together in the same directory)
+    # TODO delete this if not needed
+    #logInfo "Copying minecraft server jar [${minecraftServerJar}] to world directory: ${worldDir}"
+    #cp -f ${minecraftServerJar} ${worldDir}/ >> ${logFile} 2>&1
+    #if [ $? -ne 0 ]; then logErr "Problem copying minecraft server jar [${minecraftServerJar}] to world directory: ${worldDir}"; return 1; fi
+
+    # Run the forge installer from the world directory
     cd ${worldDir}/
-    forgeInstallCmd="${javaExe} -jar ${forgeInstallerFileName} --installServer"
-    logInfo "Running the forge install command: ${forgeInstallCmd}"
-    ${forgeInstallCmd} >> ${logFile} 2>&1
-    if [ $? -ne 0 ]; then logErr "Problem installing forge"; return 1; fi
-    logInfo "Completed forge install in: ${worldDir}"
 
-    # Check for mods
+    # Create the forge installer command
+    forgeInstallCmd="${java11Exe} -jar ${forgeInstallerFileName} --installServer"
+
+    # Run the forge installer, this generates a new jar file in the world directory that will be used to start the server
+    logInfo "Running the forge install command: [${forgeInstallCmd}]"
+    ${forgeInstallCmd} >> ${logFile} 2>&1
+    if [ $? -ne 0 ]; then logErr "Problem installing forge with command: [${forgeInstallCmd}]"; return 1; fi
+
+    logInfo "Completed forge install of [${forgeInstallerFileName}] in: ${worldDir}"
+    return 0
+}
+
+function install_mods() {
+    logTag="install_mods"
+    worldName="${1}"
+    worldDir="${worldsDir}/${worldName}"
+    serverConfigFile="${worldDir}/yennacraft.config.sh"
+
     logInfo "Sourcing Minecraft world version file: ${serverConfigFile}"
     . ${serverConfigFile}
+
+    # Ensure SERVER_VERSION is set
+    if [ -z "${SERVER_VERSION}" ]; then logErr "SERVER_VERSION variable not set"; return 1; fi
+    if [ -z "${VANILLA_VERSION}" ]; then logErr "VANILLA_VERSION variable not set"; return 1; fi
+
+    # Check for mods
+    logInfo "Checking for SERVER_MODS..."
     if [ -z "${SERVER_MODS}" ]; then
         logInfo "SERVER_MODS variable not set, no mods to configure"
         return 0
     fi
-    logInfo "Found SERVER_MODS variable to configure: ${SERVER_MODS}"
-    serverModsArr=(${SERVER_MODS//,/ })
 
-    # Ensure the mods dir exists for this version
-    versionModsDir="${modsDir}/forge/${minecraftVersion}"
-    if [ ! -d ${versionModsDir} ]; then logErr "Mods directory for this minecraft version not found: ${versionModsDir}"; return 1; fi
-    logInfo "Checking for mods in: ${versionModsDir}"
+    logInfo "Found SERVER_MODS variable to configure: ${SERVER_MODS}"
+
+    # Split the comma-separated mods into an array
+    serverModsArr=(${SERVER_MODS//,/ })
 
     # Create the mods directory
     worldModsDir="${worldDir}/mods"
@@ -132,7 +222,23 @@ function install_forge() {
     mkdir -p ${worldModsDir} >> ${logFile} 2>&1
     if [ $? -ne 0 ]; then logErr "Problem creating mods directory: ${worldModsDir}"; return 1; fi
 
-    # Configure mods
+    # Check if the mods are for forge or fabric
+    if [[ "${MOD_FRAMEWORK}" == "forge" ]]; then
+        logInfo "Installing forge mods for minecraft version ${VANILLA_VERSION}..."
+        versionModsDir="${modsDir}/forge/${VANILLA_VERSION}"
+    elif [[ "${MOD_FRAMEWORK}" == "fabric" ]]; then
+        logInfo "Installing fabric mods for minecraft version ${VANILLA_VERSION}..."
+        versionModsDir="${modsDir}/fabric/${VANILLA_VERSION}"
+    else
+        logErr "MOD_FRAMEWORK [${MOD_FRAMEWORK}] not recognized, expected forge or fabric"
+        return 1
+    fi
+
+    # Ensure the mods dir exists for this version
+    if [ ! -d ${versionModsDir} ]; then logErr "mods directory for this minecraft version not found: ${versionModsDir}"; return 1; fi
+    logInfo "Checking for mods in: ${versionModsDir}"
+
+    # Install mods mods
     for mod in "${serverModsArr[@]}"; do
         logInfo "Installing mod: ${mod}"
 
@@ -148,7 +254,6 @@ function install_forge() {
         if [ $? -ne 0 ]; then logErr "Problem copying mod file [${modFile}] to world mod directory: ${worldModsDir}"; return 1; fi
     done
     logInfo "Completed setting up mods!"
-    return 0
 }
 
 function start_minecraft_server() {
@@ -158,32 +263,46 @@ function start_minecraft_server() {
     xmsConfig='-Xms1024M'
     worldName="${1}"
     worldDir="${worldsDir}/${worldName}"
-    serverConfigFile="${worldDir}/server-version.sh"
+    serverConfigFile="${worldDir}/yennacraft.config.sh"
 
     if [ -z "${worldName}" ]; then logErr "World name not provided"; return 1; fi
     if [ -z "${worldDir}" ]; then logErr "World directory not provided"; return 1; fi
     if [ ! -d ${worldDir} ]; then logErr "World directory not found: ${worldDir}"; return 1; fi
     if [ ! -e ${javaExe} ]; then logErr "${javaExe} not found"; return 1; fi
+    if [ ! -e ${java11Exe} ]; then logErr "${java11Exe} not found"; return 1; fi
     if [ ! -e ${screenExe} ]; then logErr "${screenExe} not found"; return 1; fi
     if [ ! -f ${serverConfigFile} ]; then logErr "Minecraft world server version file not found: ${serverConfigFile}"; return 1; fi
 
     logInfo "Sourcing Minecraft world version file: ${serverConfigFile}"
     . ${serverConfigFile}
 
+    # Ensure SERVER_VERSION is set
     if [ -z "${SERVER_VERSION}" ]; then logErr "SERVER_VERSION variable not set"; return 1; fi
 
-    if [[ ${SERVER_VERSION} == "forge"* ]]; then
+    logInfo "SERVER_VERSION: ${SERVER_VERSION}"
+    logInfo "MOD_FRAMEWORK: ${MOD_FRAMEWORK}"
+    logInfo "SERVER_MODS: ${SERVER_MODS}"
+
+    # Install mods
+    logInfo "Installing mods if any are configured..."
+    install_mods "${worldName}"
+    if [ $? -ne 0 ]; then logErr "Problem installing mods for world: ${worldName}"; return 1; fi
+
+    if [[ "${MOD_FRAMEWORK}" == "forge" ]]; then
         logInfo "This is a forge server..."
-        install_forge "${worldDir}" "${SERVER_VERSION}"
+        install_forge "${worldName}"
         forgeInstallRes=$?
         logTag="start_minecraft_server"
         if [ ${forgeInstallRes} -ne 0 ]; then logErr "Problem installing forge server"; return 1; fi
-        serverJarFileName=$(ls ${worldDir}/ | grep 'forge' | grep 'jar' | grep -v 'installer')
+        serverJarFileName=$(ls ${worldDir}/ | grep 'jar' | grep 'forge' | grep -v 'installer')
         serverJar="${worldDir}/${serverJarFileName}"
+        javaCmd="${java11Exe}"
     else
         serverJar="${serverJarsDir}/${SERVER_VERSION}/server.jar"
+        javaCmd="${javaExe}"
     fi
 
+    # Ensure the server jar file is found
     if [ ! -f ${serverJar} ]; then logErr "Minecraft world server jar not found: ${serverJar}"; return 1; fi
 
     accept_eula "${worldDir}" "${serverJar}"
@@ -191,12 +310,21 @@ function start_minecraft_server() {
     
     logInfo "Running minecraft world: ${worldDir}"
     cd ${worldDir}/
-    minecraftCmd="${javaExe} ${xmxConfig} ${xmsConfig} -jar ${serverJar} nogui"
+    minecraftCmd="${javaCmd} ${xmxConfig} ${xmsConfig} -jar ${serverJar} nogui"
     screenName="minecraft_${worldName}"
     logInfo "Launching ${screenName} from screen with command: $minecraftCmd"
-    ${screenExe} -dmS ${screenName} ${minecraftCmd}
-    if [ $? -ne 0 ]; then logErr "Problem launching screen $screenName command: $minecraftCmd"; return 1; fi
-    logInfo "Started minecraft background screen successfully: $screenName"
+    ${screenExe} -d -m -L -Logfile ${logFile} -S ${screenName} ${minecraftCmd}
+    if [ $? -ne 0 ]; then logErr "Problem launching screen ${screenName} command: $minecraftCmd"; return 1; fi
+    logInfo "Started minecraft background screen successfully: ${screenName}"
+
+    # Wait for server startup
+    logInfo "Waiting 10 seconds to check for server startup..."
+    sleep 10s
+
+    # Check for running server
+    # TODO
+
+    logInfo "Completed starting world: ${worldName}"
     return 0
 }
 
@@ -235,11 +363,21 @@ function stop_minecraft_server() {
 
     minecraftScreenSession=$(screen -list | grep 'Detached' | grep "${screenName}")
     if [ -z "${minecraftScreenSession}" ]; then
-        logInfo "Minecraft server not running: ${minecraftScreenSession}"
+        logInfo "Minecraft server not running: ${screenName}"
         return 0
     fi
     logInfo "Found running server: ${minecraftScreenSession}"
-    logInfo "Quitting: ${screenName}..."
+    logInfo "Stopping the minecraft server: ${screenName}"
+    screen -S ${screenName} -X stuff "/stop^M"
+    logInfo "Waiting 60 seconds for the world to shut down..."
+    sleep 60
+
+    minecraftScreenSession=$(screen -list | grep 'Detached' | grep "${screenName}")
+    if [ -z "${minecraftScreenSession}" ]; then
+        logInfo "Minecraft server already stopped: ${screenName}"
+        return 0
+    fi
+    logInfo "Quitting screen session: ${screenName}..."
     screen -X -S ${screenName} quit
     if [ $? -ne 0 ]; then logErr "Problem quitting minecraft screen session: ${screenName}"; return 1; fi
     sleep 2

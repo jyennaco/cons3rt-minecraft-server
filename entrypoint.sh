@@ -9,9 +9,9 @@ worldDir="REPLACE_WORLDS_DIR/${worldName}"
 scriptsDir='REPLACE_SCRIPTS_DIR'
 serverVersion='REPLACE_VERSION'
 
-# Configure the server-version.sh script
-sed -i '/^SERVER_VERSION=.*/d' ${worldDir}/server-version.sh
-echo "SERVER_VERSION=${serverVersion}" >> ${worldDir}/server-version.sh
+# Configure the yennacraft.config.sh script
+sed -i '/^SERVER_VERSION=.*/d' ${worldDir}/yennacraft.config.sh
+echo "SERVER_VERSION=${serverVersion}" >> ${worldDir}/yennacraft.config.sh
 
 # Change into the scripts directory
 cd ${scriptsDir}

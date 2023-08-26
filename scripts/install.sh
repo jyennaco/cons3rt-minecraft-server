@@ -95,8 +95,8 @@ function setup_params() {
     logInfo "Using first world server release directory: ${firstWorldServerJarDir}"
     mkdir -p ${firstWorldServerJarDir} >> ${logFile} 2>&1
 
-    # Create the server-version.sh file in the first world directory
-    serverVersionFile="${firstWorldDir}/server-version.sh"
+    # Create the yennacraft.config.sh file in the first world directory
+    serverVersionFile="${firstWorldDir}/yennacraft.config.sh"
     logInfo "Creating server version file: ${serverVersionFile}"
     echo "SERVER_VERSION=${latestRelease}" > ${serverVersionFile}
     return 0
@@ -122,19 +122,6 @@ function create_minecraft_users() {
     if [ $? -ne 0 ]; then logErr "Problem creating user: minecraft"; return 1; fi
     #create_user "mcbackup"
     #if [ $? -ne 0 ]; then logErr "Problem creating user: mcbackup"; return 1; fi
-
-    # Configure the minecraft user to run as a service and rootless
-    logInfo "Configuring rootless for the minecraft user..."
-    loginctl enable-linger minecraft
-    mkdir -p /run/user/$(id -u minecraft)
-    mkdir -p /var/user/minecraft/tmp
-    chown -R minecraft:minecraft /run/user/$(id -u minecraft)
-    chown -R minecraft:minecraft /var/user/minecraft
-
-    # Add variables to ~/.profile
-    logInfo "Adding variables to: /home/minecraft/.profile"
-    echo 'export XDG_RUNTIME_DIR=/run/user/$(id -u)' >> /home/minecraft/.profile
-    echo 'export TMPDIR=/var/user/$(whoami)/tmp' >> /home/minecraft/.profile
 
     logInfo "Created minecraft users"
     return 0
@@ -261,22 +248,6 @@ EOF
     return 0
 }
 
-function run_minecraft_service() {
-    logInfo "Running the Minecraft server..."
-    accept_eula
-    if [ $? -ne 0 ]; then logErr "Problem accepting the EULA"; return 1; fi
-    config_minecraft_service
-    logInfo "Starting and enabling the minecraft.service..."
-    logInfo "Setting permissions on: ${minecraftServerDir}"
-    chown -R minecraft:minecraft ${minecraftServerDir}
-    chown -R minecraft:minecraft ${minecraftLogDir}
-    systemctl enable minecraft.service >> ${logFile} 2>&1
-    if [ $? -ne 0 ]; then logErr "Problem enabling minecraft.service"; return 1; fi
-    systemctl start minecraft.service >> ${logFile} 2>&1
-    if [ $? -ne 0 ]; then logErr "Problem start minecraft.service"; return 1; fi
-    return 0
-}
-
 function install_management_scripts() {
     logInfo "Installing management scripts to: ${scriptsDir}"
     cp -f ${backupScript} ${scriptsDir}/ >> ${logFile} 2>&1
@@ -299,6 +270,112 @@ function install_management_scripts() {
     logInfo "Setting permissions on: ${scriptsDir}"
     chmod +x ${scriptsDir}/* >> ${logFile} 2>&1
     if [ $? -ne 0 ]; then logErr "Problem setting permissions on scripts in directory: ${scriptsDir}"; return 1; fi
+    return 0
+}
+
+function rootless_service_configuration() {
+    logInfo "Configuring the minecraft rootless service with the start and stop scripts..."
+
+    ######################################################
+    # Rootless service configuration
+    ######################################################
+
+    # Configure the minecraft user to run as a service and rootless
+    logInfo "Configuring rootless for the minecraft user..."
+    loginctl enable-linger minecraft
+    if [ $? -ne 0 ]; then logWarn "Problem reloading setting loginctl for minecraft"; return 1; fi
+
+    # Create XDG_RUNETIME_DIR and TMPDIR
+    logInfo "Creating XDG_RUNTIME_DIR [/run/user/$(id -u minecraft)] and TMPDIR [/var/user/minecraft/tmp]..."
+    mkdir -p /run/user/$(id -u minecraft)
+    if [ $? -ne 0 ]; then logWarn "Problem creating directory: /run/user/$(id -u minecraft)"; return 1; fi
+    mkdir -p /var/user/minecraft/tmp
+    if [ $? -ne 0 ]; then logWarn "Problem creating directory: var/user/minecraft/tmp"; return 1; fi
+
+    # Set permissions on XDG_RUNETIME_DIR and TMPDIR
+    logInfo "Setting permissions..."
+    chown -R minecraft:minecraft /run/user/$(id -u minecraft)
+    if [ $? -ne 0 ]; then logWarn "Problem setting permissions on: /run/user/$(id -u minecraft)"; return 1; fi
+    chown -R minecraft:minecraft /var/user/minecraft
+    if [ $? -ne 0 ]; then logWarn "Problem setting permissions on: /var/user/minecraft"; return 1; fi
+
+    # Create the tmpfiles.d conf file to ensure XDG_RUNTIME_DIR and TMPDIR are created for minecraft on boot
+    logInfo "Creating file: /etc/tmpfiles.d/minecraft.conf"
+
+cat << EOF >> "/etc/tmpfiles.d/minecraft.conf"
+d /run/user/$(id -u minecraft) 700 minecraft minecraft
+d /var/user/minecraft 755 minecraft minecraft
+d /var/user/minecraft/tmp 755 minecraft minecraft
+EOF
+
+    # Add variables to ~/.profile
+    logInfo "Adding variables to: /home/minecraft/.profile"
+    echo 'export XDG_RUNTIME_DIR=/run/user/$(id -u)' >> /home/minecraft/.profile
+    echo 'export TMPDIR=/var/user/$(whoami)/tmp' >> /home/minecraft/.profile
+
+    # Create the rootless systemd directory
+    local rootlessSystemdDir="/home/minecraft/.config/systemd/user"
+    logInfo "Creating directory: ${rootlessSystemdDir}"
+    mkdir -p ${rootlessSystemdDir} >> ${logFile} 2>&1
+    chown minecraft:minecraft ${rootlessSystemdDir} >> ${logFile} 2>&1
+    chmod 700 ${rootlessSystemdDir} >> ${logFile} 2>&1
+
+    # Stage the systemd evergreen or singlehost service file (these are needed on RHEL7)
+    local minecraftRootlessServiceFile="${rootlessSystemdDir}/minecraft.service"
+
+    # Create the rootless service file
+cat << EOF >> "${minecraftRootlessServiceFile}"
+## minecraft.service
+
+[Unit]
+Description=Controls the single currently-configured minecraft server specified in
+After=local-fs.target network.target
+
+[Service]
+Type=forking
+WorkingDirectory=/opt/Minecraft_Servers/scripts
+ExecStartPre=/bin/echo 'Starting minecraft.service...' >> /opt/Minecraft_Servers/log/minecraft-service.log
+ExecStart=/bin/bash /opt/Minecraft_Servers/scripts/start-server.sh
+ExecStartPost=/bin/echo 'Starting minecraft.service...' >> /opt/Minecraft_Servers/log/minecraft-service.log
+ExecStop=/bin/bash /opt/Minecraft_Servers/scripts/stop-server.sh
+ExecStopPost=/bin/echo 'Stopped minecraft.service' >> /opt/Minecraft_Servers/log/minecraft-service.log
+RestartSec=5
+Restart=on-failure
+RemainAfterExit=yes
+StandardOutput=append:/opt/Minecraft_Servers/log/minecraft-service.log
+StandardError=append:/opt/Minecraft_Servers/log/minecraft-service.log
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    # Set permissions
+    chown minecraft:minecraft ${minecraftRootlessServiceFile} >> ${logFile} 2>&1
+    chmod 644 ${minecraftRootlessSrviceFile}\ >> ${logFile} 2>&1
+
+    # Set permissions
+    set_permissions_home_dir
+
+    # Reload the daemon reload
+    logInfo "Running systemctl --user daemon-reload as minecraft..."
+    runuser -l minecraft -c "systemctl --user daemon-reload" >> ${logFile} 2>&1
+    if [ $? -ne 0 ]; then logWarn "Problem reloading the systemctl daemon as minecraft"; fi
+
+}
+
+function run_minecraft_service() {
+    logInfo "Running the Minecraft server..."
+    accept_eula
+    if [ $? -ne 0 ]; then logErr "Problem accepting the EULA"; return 1; fi
+    config_minecraft_service
+    logInfo "Starting and enabling the minecraft.service..."
+    logInfo "Setting permissions on: ${minecraftServerDir}"
+    chown -R minecraft:minecraft ${minecraftServerDir}
+    chown -R minecraft:minecraft ${minecraftLogDir}
+    systemctl enable minecraft.service >> ${logFile} 2>&1
+    if [ $? -ne 0 ]; then logErr "Problem enabling minecraft.service"; return 1; fi
+    systemctl start minecraft.service >> ${logFile} 2>&1
+    if [ $? -ne 0 ]; then logErr "Problem start minecraft.service"; return 1; fi
     return 0
 }
 

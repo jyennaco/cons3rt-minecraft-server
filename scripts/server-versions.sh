@@ -21,6 +21,7 @@ serverDownloadUrls['23w07a']='https://piston-data.mojang.com/v1/objects/b919e6e1
 serverDownloadUrls['23w16a']='https://piston-data.mojang.com/v1/objects/4a8487f877eb4f3506978fb85faf41a08b570398/server.jar'
 serverDownloadUrls['23w18a']='https://piston-data.mojang.com/v1/objects/240177c763b6009ea81aaf0ef14a73822320856d/server.jar'
 serverDownloadUrls['23w31a']='https://piston-data.mojang.com/v1/objects/11ef2ae139b0badda80a1ea07c2dd0cf9034a32f/server.jar'
+serverDownloadUrls['23w33a']='https://piston-data.mojang.com/v1/objects/0254dde460b23861840cff6e80fc7fdbbccad88e/server.jar'
 
 # Releases
 serverDownloadUrls['1.16.1']='https://launcher.mojang.com/v1/objects/a412fd69db1f81db3f511c1463fd304675244077/server.jar'
@@ -37,8 +38,11 @@ serverDownloadUrls['1.20.1']='https://piston-data.mojang.com/v1/objects/84194a2f
 # curl -OJ https://meta.fabricmc.net/v2/versions/loader/1.20.1/0.14.22/0.11.2/server/jar
 serverDownloadUrls['1.20.1-fabric']='https://meta.fabricmc.net/v2/versions/loader/1.20.1/0.14.22/0.11.2/server/jar'
 
+# Forge Versions
+serverDownloadUrls['forge-1.16.5-36.2.27']='https://maven.minecraftforge.net/net/minecraftforge/forge/1.16.5-36.2.27/forge-1.16.5-36.2.27-installer.jar'
+
 # Latest versions
-latestSnapshot='23w31a'
+latestSnapshot='23w33a'
 latestRelease='1.20.1'
 
 # Latest download URLs

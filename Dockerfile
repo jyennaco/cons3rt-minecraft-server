@@ -5,7 +5,7 @@ USER root
 ENV minecraftServerDir=/opt/Minecraft_Servers
 ENV worldsDir=$minecraftServerDir/worlds
 ENV worldDir=$worldsDir/world
-ENV serverConfigFile=$worldDir/server-version.sh
+ENV serverConfigFile=$worldDir/yennacraft.config.sh
 ENV serverJarsDir=$minecraftServerDir/server_jars
 ENV modsDir=$minecraftServerDir/mods
 ENV scriptsDir=$minecraftServerDir/scripts
