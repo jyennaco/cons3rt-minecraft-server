@@ -33,3 +33,7 @@ SERVER_VERSION=release
 
 # Java Version, default: 17
 # JAVA_VERSION=8
+
+# XMX and XMS java memory configurations (default is 1024 for both)
+# XMX_CONFIG='-Xmx3072M'
+# XMS_CONFIG='-Xmx3072M'

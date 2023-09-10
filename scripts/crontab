@@ -1,0 +1,6 @@
+
+# Checks and starts the configured minecraft server
+*/5 * * * * cd /opt/Minecraft_Servers/scripts; ./start-server.sh
+
+# Backs up 3am every Monday and Thursday
+0 3 * * 1,4 cd /opt/Minecraft_Servers/scripts; ./backup-minecraft-servers.sh

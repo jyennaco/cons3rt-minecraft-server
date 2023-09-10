@@ -9,6 +9,7 @@
         "s3:PutObjectVersionAcl"
       ],
       "Resource": [
+        "arn:aws:s3:::BUCKETNAME/backups/*",
         "arn:aws:s3:::BUCKETNAME/server_jars/*",
         "arn:aws:s3:::BUCKETNAME/worlds/*"
       ]
@@ -21,6 +22,7 @@
       ],
       "Resource": [
         "arn:aws:s3:::BUCKETNAME",
+        "arn:aws:s3:::BUCKETNAME/backups/*",
         "arn:aws:s3:::BUCKETNAME/directory_backups/*",
         "arn:aws:s3:::BUCKETNAME/mods/*",
         "arn:aws:s3:::BUCKETNAME/modpacks/*",
