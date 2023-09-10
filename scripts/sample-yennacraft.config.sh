@@ -25,3 +25,11 @@ SERVER_VERSION=release
 # When using Fabric or Forge, add a comma-separated list of mods to be copied into the mods folder
 # SERVER_MODS=1.16.5EnchantmentEnhancements-1.0.0.jar,BiomesOPlenty-1.16.5-13.1.0.480-universal.jar
 
+# When using Forge, add a comma-separated list of modpacks to be extracted into the mods folder
+# SERVER_MODPACKS=RLCraft+1.12.2+-+Release+v2.9.3.zip
+
+# Server config properties
+# Edit the server.properties file directly
+
+# Java Version, default: 17
+# JAVA_VERSION=8

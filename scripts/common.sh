@@ -18,6 +18,7 @@ configFile="${minecraftServerDir}/config.sh"
 serverJarsDir="${minecraftServerDir}/server_jars"
 worldsDir="${minecraftServerDir}/worlds"
 modsDir="${minecraftServerDir}/mods"
+modPacksDir="${minecraftServerDir}/modpacks"
 backupDir="${minecraftServerDir}/backups"
 scriptsDir="${minecraftServerDir}/scripts"
 logDir="${minecraftServerDir}/log"
@@ -25,7 +26,10 @@ versionsFile="${scriptsDir}/server-versions.sh"
 awsCmd="/usr/local/bin/aws"
 slackCmd="/usr/local/bin/slack"
 javaExe='/opt/java/jre/bin/java'
+java8Exe='/opt/java/jre8/bin/java'
 java11Exe='/opt/java/jre11/bin/java'
+java17Exe='/opt/java/jre17/bin/java'
+serverJava=
 . ${configFile}
 . ${versionsFile}
 
@@ -107,6 +111,8 @@ function create_new_world() {
     worldDir="${worldsDir}/${worldName}"
     serverConfigFile="${worldDir}/yennacraft.config.sh"
     sampleConfigFile="${scriptsDir}/sample-yennacraft.config.sh"
+    serverProperties="${worldDir}/server.properties"
+    sampleServerProperties="${scriptsDir}/sample-server.properties"
 
     if [ -z "${worldName}" ]; then logErr "Please provide a world name arg"; return 1; fi
 
@@ -124,6 +130,7 @@ function create_new_world() {
     if [ $? -ne 0 ]; then logErr "Problem creating staging server config file: ${serverConfigFile}"; return 1; fi
 
     logInfo "!!! Customize your world first here: ${serverConfigFile}"
+    logInfo "!!! Customize your server properties: ${serverProperties}"
 
     logInfo "Finished creating new world: ${worldName}"
     return 0
@@ -138,7 +145,7 @@ function erase_world() {
 
     logInfo "Erasing world: ${worldName}"
     cd ${worldDir}
-    itemsToDelete=( $(ls | grep -v yennacraft.config.sh) )
+    itemsToDelete=( $(ls | grep -v 'yennacraft.config.sh' | grep -v 'server.properties') )
 
     # Delete items
     for item in "${itemsToDelete[@]}"; do
@@ -163,6 +170,10 @@ function install_forge() {
     # Ensure SERVER_VERSION is set
     if [ -z "${SERVER_VERSION}" ]; then logErr "SERVER_VERSION variable not set"; return 1; fi
     if [ -z "${VANILLA_VERSION}" ]; then logErr "VANILLA_VERSION variable not set"; return 1; fi
+
+    # Set the java version
+    set_java_version
+    if [ $? -ne 0 ]; then logErr "Problem setting the java version"; return 1; fi
 
     # Determine the forge installer file name and install destination in the world directory
     forgeInstallerFileName="${SERVER_VERSION}-installer.jar"
@@ -189,7 +200,7 @@ function install_forge() {
     cd ${worldDir}/
 
     # Create the forge installer command
-    forgeInstallCmd="${java11Exe} -jar ${forgeInstallerFileName} --installServer"
+    forgeInstallCmd="${serverJava} -jar ${forgeInstallerFileName} --installServer"
 
     # Run the forge installer, this generates a new jar file in the world directory that will be used to start the server
     logInfo "Running the forge install command: [${forgeInstallCmd}]"
@@ -198,6 +209,65 @@ function install_forge() {
 
     logInfo "Completed forge install of [${forgeInstallerFileName}] in: ${worldDir}"
     return 0
+}
+
+function install_modpacks() {
+    logTag="install_modpacks"
+    worldName="${1}"
+    worldDir="${worldsDir}/${worldName}"
+    serverConfigFile="${worldDir}/yennacraft.config.sh"
+
+    logInfo "Sourcing Minecraft world version file: ${serverConfigFile}"
+    . ${serverConfigFile}
+
+    # Ensure SERVER_VERSION is set
+    if [ -z "${SERVER_VERSION}" ]; then logErr "SERVER_VERSION variable not set"; return 1; fi
+    if [ -z "${VANILLA_VERSION}" ]; then logErr "VANILLA_VERSION variable not set"; return 1; fi
+
+    # Check for mods
+    logInfo "Checking for SERVER_MODS..."
+    if [ -z "${SERVER_MODPACKS}" ]; then
+        logInfo "SERVER_MODPACKS variable not set, no modpacks to configure"
+        return 0
+    fi
+
+    logInfo "Found SERVER_MODPACKS variable to configure: ${SERVER_MODPACKS}"
+
+    # Split the comma-separated mods into an array
+    serverModPacksArr=(${SERVER_MODPACKS//,/ })
+
+    # Check if the mods are for forge or fabric
+    if [[ "${MOD_FRAMEWORK}" == "forge" ]]; then
+        logInfo "Installing forge mods for minecraft version ${VANILLA_VERSION}..."
+        versionModPacksDir="${modPacksDir}/forge/${VANILLA_VERSION}"
+    elif [[ "${MOD_FRAMEWORK}" == "fabric" ]]; then
+        logInfo "Installing fabric mods for minecraft version ${VANILLA_VERSION}..."
+        versionModPacksDir="${modPacksDir}/fabric/${VANILLA_VERSION}"
+    else
+        logErr "MOD_FRAMEWORK [${MOD_FRAMEWORK}] not recognized, expected forge or fabric"
+        return 1
+    fi
+
+    # Ensure the mods dir exists for this version
+    if [ ! -d ${versionModPacksDir} ]; then logErr "mods directory for this minecraft version not found: ${versionModPacksDir}"; return 1; fi
+    logInfo "Checking for mods in: ${versionModPacksDir}"
+
+    # Install modpacks
+    for modPack in "${serverModPacksArr[@]}"; do
+        logInfo "Installing modpack: ${modPack}"
+
+        # Get the modpack file name
+        modPackFileName=$(ls ${versionModPacksDir}/ | grep 'zip' | grep "${modPack}")
+        if [ -z "${modPackFileName}" ]; then logErr "Modpack file [${modPack}] not found in mods directory: ${versionModPacksDir}"; return 1; fi
+        modPackFile="${versionModPacksDir}/${modPackFileName}"
+        if [ ! -f "${modPackFile}" ]; then logErr "Modpack file not found: ${modPackFile}"; return 1; fi
+
+        # Extract the modpack to the world directory
+        logInfo "Extracting modpack file [${modPackFile}] to world directory: ${worldDir}"
+        unzip -n ${modPackFile} -d ${worldDir}/ >> ${logFile} 2>&1
+        if [ $? -ne 0 ]; then logErr "Problem extracting modpack file [${modPackFile}] to world mod directory: ${worldModsDir}"; return 1; fi
+    done
+    logInfo "Completed setting up modpacks!"
 }
 
 function install_mods() {
@@ -265,6 +335,42 @@ function install_mods() {
     logInfo "Completed setting up mods!"
 }
 
+function set_java_version() {
+    logInfo "Determining the java version to use..."
+    if [[ "${1}" == "forge" ]]; then
+        defaultJava="${java11Exe}"
+        logInfo "Forge is using default java: ${java11Exe}"
+    else
+        defaultJava="${javaExe}"
+    fi
+
+    # Source the server config filr
+    . ${serverConfigFile}
+
+    # Check the JAVA_VERSION
+    if [ -z "${JAVA_VERSION}" ]; then
+        logInfo "No java version specified, using java 11 for forge by default..."
+        serverJava="${defaultJava}"
+    else
+        case ${JAVA_VERSION} in
+            8)
+                serverJava="${java8Exe}"
+                ;;
+            11)
+                serverJava="${java11Exe}"
+                ;;
+            17)
+                serverJava="${java17Exe}"
+                ;;
+            *)
+                logErr "Unrecognized java version, expected 8, 11, or 17: ${JAVA_VERSION}"
+                return 1
+        esac
+    fi
+    logInfo "Using java version: ${serverJava}"
+    return 0
+}
+
 function start_minecraft_server() {
     logTag="start_minecraft_server"
     screenExe='/usr/bin/screen'
@@ -278,9 +384,18 @@ function start_minecraft_server() {
     if [ -z "${worldDir}" ]; then logErr "World directory not provided"; return 1; fi
     if [ ! -d ${worldDir} ]; then logErr "World directory not found: ${worldDir}"; return 1; fi
     if [ ! -e ${javaExe} ]; then logErr "${javaExe} not found"; return 1; fi
+    if [ ! -e ${java8Exe} ]; then logErr "${java8Exe} not found"; return 1; fi
     if [ ! -e ${java11Exe} ]; then logErr "${java11Exe} not found"; return 1; fi
+    if [ ! -e ${java17Exe} ]; then logErr "${java17Exe} not found"; return 1; fi
     if [ ! -e ${screenExe} ]; then logErr "${screenExe} not found"; return 1; fi
     if [ ! -f ${serverConfigFile} ]; then logErr "Minecraft world server version file not found: ${serverConfigFile}"; return 1; fi
+
+    # Set the java version
+    set_java_version
+    if [ $? -ne 0 ]; then logErr "Problem setting the java version"; return 1; fi
+
+    # Ensure the server java is found
+    if [ ! -e ${serverJava} ]; then logErr "Server java [${serverJava}] not found"; return 1; fi
 
     logInfo "Sourcing Minecraft world version file: ${serverConfigFile}"
     . ${serverConfigFile}
@@ -299,6 +414,13 @@ function start_minecraft_server() {
     logTag="start_minecraft_server"
     if [ ${modRes} -ne 0 ]; then logErr "Problem installing mods for world: ${worldName}"; return 1; fi
 
+    # Install modpacks
+    logInfo "Installing modpacks if any are configured..."
+    install_modpacks "${worldName}"
+    modPackRes=$?
+    logTag="start_minecraft_server"
+    if [ ${modPackRes} -ne 0 ]; then logErr "Problem installing modpacks for world: ${worldName}"; return 1; fi
+
     if [[ "${MOD_FRAMEWORK}" == "forge" ]]; then
         logInfo "This is a forge server..."
         install_forge "${worldName}"
@@ -307,10 +429,8 @@ function start_minecraft_server() {
         if [ ${forgeInstallRes} -ne 0 ]; then logErr "Problem installing forge server"; return 1; fi
         serverJarFileName=$(ls ${worldDir}/ | grep 'jar' | grep 'forge' | grep -v 'installer')
         serverJar="${worldDir}/${serverJarFileName}"
-        javaCmd="${java11Exe}"
     else
         serverJar="${serverJarsDir}/${SERVER_VERSION}/server.jar"
-        javaCmd="${javaExe}"
     fi
 
     # Ensure the server jar file is found
@@ -321,7 +441,7 @@ function start_minecraft_server() {
     
     logInfo "Running minecraft world: ${worldDir}"
     cd ${worldDir}/
-    minecraftCmd="${javaCmd} ${xmxConfig} ${xmsConfig} -jar ${serverJar} nogui"
+    minecraftCmd="${serverJava} ${xmxConfig} ${xmsConfig} -jar ${serverJar} nogui"
     screenName="minecraft_${worldName}"
     logInfo "Launching ${screenName} from screen with command: $minecraftCmd"
     ${screenExe} -d -m -L -Logfile ${logFile} -S ${screenName} ${minecraftCmd}

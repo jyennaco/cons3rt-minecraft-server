@@ -12,6 +12,7 @@ fi
 
 minecraftServerDir='/opt/Minecraft_Servers'
 modsDir="${minecraftServerDir}/mods"
+modPacksDir="${minecraftServerDir}/modpacks"
 configFile="${minecraftServerDir}/config.sh"
 
 # Establish a log file and log tag
@@ -37,6 +38,12 @@ if [ ! -d ${modsDir} ]; then
     mkdir -p ${modsDir}
 fi
 
+# Ensure the modpacks directory exists
+if [ ! -d ${modPacksDir} ]; then
+    logInfo "Creating modpacks directory: ${modPacksDir}"
+    mkdir -p ${modPacksDir}
+fi
+
 # Ensure the aws command is found
 which aws
 if [ $? -ne 0 ]; then logErr "aws command not found, please install the AWS CLI and then re-try"; exit 1; fi
@@ -45,6 +52,11 @@ if [ $? -ne 0 ]; then logErr "aws command not found, please install the AWS CLI 
 logInfo "Syncing [s3://${S3_BUCKET_NAME}/mods] with: [${modsDir}]..."
 aws s3 sync s3://${S3_BUCKET_NAME}/mods ${modsDir}
 if [ $? -ne 0 ]; then logErr "Problem syncing the mods from S3 [s3://${S3_BUCKET_NAME}/mods] to: [${modsDir}]"; exit 1; fi
+
+# Run the aws s3 sync command to sync the mods directory with S3
+logInfo "Syncing [s3://${S3_BUCKET_NAME}/modpacks] with: [${modPacksDir}]..."
+aws s3 sync s3://${S3_BUCKET_NAME}/modpacks ${modPacksDir}
+if [ $? -ne 0 ]; then logErr "Problem syncing the modpacks from S3 [s3://${S3_BUCKET_NAME}/modpacks] to: [${modPacksDir}]"; exit 1; fi
 
 logInfo "Completed syncing up the mods directory: ${modsDir}"
 logInfo "Next step, copy mods into your world mod directory"

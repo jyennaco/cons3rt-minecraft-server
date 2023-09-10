@@ -1,0 +1,32 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:PutObjectAcl",
+        "s3:PutObjectVersionAcl"
+      ],
+      "Resource": [
+        "arn:aws:s3:::BUCKETNAME/server_jars/*",
+        "arn:aws:s3:::BUCKETNAME/worlds/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::BUCKETNAME",
+        "arn:aws:s3:::BUCKETNAME/directory_backups/*",
+        "arn:aws:s3:::BUCKETNAME/mods/*",
+        "arn:aws:s3:::BUCKETNAME/modpacks/*",
+        "arn:aws:s3:::BUCKETNAME/server_jars/*",
+        "arn:aws:s3:::BUCKETNAME/worlds/*"
+      ]
+    }
+  ]
+}
