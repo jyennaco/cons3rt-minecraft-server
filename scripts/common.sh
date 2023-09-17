@@ -107,19 +107,22 @@ function backup_servers() {
 
     logInfo "Stopping running minecraft servers: [${minecraftScreensStr}]"
 
-    logInfo "Stopping all minecraft servers for backup..."
-    stop_all_minecraft_servers
-    if [ $? -ne 0 ]; then
-        report_backup_error "Problem stopping Minecraft servers"
+    if [ ${#minecraftScreens[@]} -gt 0 ]; then
+        logInfo "Stopping all minecraft servers for backup..."
+        stop_all_minecraft_servers
+        if [ $? -ne 0 ]; then
+            report_backup_error "Problem stopping Minecraft servers"
+            logTag="backup_servers"
+            logInfo "Removing lock file: ${serverLockFile}"
+            rm -f ${serverLockFile}
+            return 1
+        fi
         logTag="backup_servers"
-        logInfo "Removing lock file: ${serverLockFile}"
-        rm -f ${serverLockFile}
-        return 1
+        logInfo "Waiting 3 seconds to proceed..."
+        sleep 3
+    else
+        logInfo "No minecraft servers running, nothing to stop!"
     fi
-    logTag="backup_servers"
-
-    logInfo "Sleeping before proceeding..."
-    sleep 3
 
     # Collect a list of all the worlds for backup
     logInfo "Getting a list of worlds in: ${worldsDir}"
@@ -153,16 +156,20 @@ function backup_servers() {
     rm -f ${serverLockFile}
 
     # Restart servers that were running
-    logInfo "Starting servers that were running prior to the update: ${minecraftScreensStr}"
-    for runningWorldScreenName in "${minecraftScreens}"; do
-        runningWorldName=$(echo ${runningWorldScreenName##minecraft_})
-        logInfo "Waiting to start server: ${runningWorldName}"
-        sleep 10
-        logInfo "Restarting minecraft world: ${runningWorldName}"
-        start_minecraft_server "${runningWorldName}"
-        if [ $? -ne 0 ]; then report_backup_error "Problem starting minecraft server world: ${runningWorldName}"; res=1; fi
-        logTag="backup_servers"
-    done
+    if [ ${#minecraftScreens[@]} -gt 0 ]; then
+        logInfo "Starting servers that were running prior to the update: ${minecraftScreensStr}"
+        for runningWorldScreenName in "${minecraftScreens[@]}"; do
+            runningWorldName=$(echo ${runningWorldScreenName##minecraft_})
+            logInfo "Waiting to start server: ${runningWorldName}"
+            sleep 10
+            logInfo "Restarting minecraft world: ${runningWorldName}"
+            start_minecraft_server "${runningWorldName}"
+            if [ $? -ne 0 ]; then report_backup_error "Problem starting minecraft server world: ${runningWorldName}"; res=1; fi
+            logTag="backup_servers"
+        done
+    else
+        logInfo "No minecraft servers were running before the backup, nothing to restart..."
+    fi
 
     # Run the aws s3 sync command to sync the backups directory with S3
     logInfo "Syncing ${backupDir} to: [s3://${S3_BUCKET_NAME}/backups]..."
