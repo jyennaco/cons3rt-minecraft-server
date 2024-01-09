@@ -42,7 +42,8 @@ serverDownloadUrls['1.20.4']='https://piston-data.mojang.com/v1/objects/8dd1a280
 
 # Fabric Versions
 # curl -OJ https://meta.fabricmc.net/v2/versions/loader/1.20.1/0.14.22/0.11.2/server/jar
-serverDownloadUrls['1.19.2-fabric']='https://meta.fabricmc.net/v2/versions/loader/1.19.2/0.15.3/1.0.0/server/jar'
+serverDownloadUrls['1.19.2-0.15.3-fabric']='https://meta.fabricmc.net/v2/versions/loader/1.19.2/0.15.3/1.0.0/server/jar'
+serverDownloadUrls['1.19.2-0.14.22-fabric']='https://meta.fabricmc.net/v2/versions/loader/1.19.2/0.14.22/1.0.0/server/jar'
 serverDownloadUrls['1.20.1-fabric']='https://meta.fabricmc.net/v2/versions/loader/1.20.1/0.14.22/0.11.2/server/jar'
 serverDownloadUrls['1.20.2-fabric']='https://meta.fabricmc.net/v2/versions/loader/1.20.2/0.14.22/0.11.2/server/jar'
 

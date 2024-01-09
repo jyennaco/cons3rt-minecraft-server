@@ -13,4 +13,7 @@ For other release and snapshot download URLs, see the server-versions.sh file.
 
 Fabric Downloads
 
+Note: Be sure to download the **server** pack to run on the Minecraft Server.  It contains
+the actual mod files and not just a manifest.
+
 * https://fabricmc.net/use/server/
