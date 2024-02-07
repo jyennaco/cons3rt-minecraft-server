@@ -198,7 +198,7 @@ function check_for_s3_backup() {
     local checkTimestamp="${2}"
     logInfo "Checking for a backup in s3://${S3_BUCKET_NAME}/backups/ with name ${checkWorldName} and timestamp ${checkTimestamp}..."
     local existingBackup=$(${awsCmd} s3 ls s3://${S3_BUCKET_NAME}/backups/ | grep "${checkWorldName}" | grep ${checkTimestamp})
-    if [ -z ${existingBackup} ]; then
+    if [ -z "${existingBackup}" ]; then
         logInfo "Existing backup not found for world ${checkWorldName} and timestamp ${checkTimestamp}"
         return 0
     else
