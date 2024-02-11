@@ -1,0 +1,17 @@
+
+Prerequisites:
+
+* python3 installed with selenium
+* geckodriver installed for Selenium
+
+Usage:
+
+1. Download a modpack from CurseForge (if it does not already have a server pack)
+2. Extract the zip file
+3. Run this command to download mods to the extracted mod directory
+
+python3 mod_pack_maker.py build --mod /path/to/extracted/modpack
+
+4. Zip up the *CONTENTS* of the modpack directory (don't zip the parent folder)
+5. Attempt to run the server with the modpack, if any mod fails since it is "Client-Only", find it on your
+computer in ~/.minecraft/project_info.json and set "client_mod" true.
