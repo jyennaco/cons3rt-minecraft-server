@@ -50,6 +50,7 @@ serverDownloadUrls['1.20.2-fabric']='https://meta.fabricmc.net/v2/versions/loade
 # Forge Versions
 serverDownloadUrls['forge-1.12.2-14.23.5.2860']='https://maven.minecraftforge.net/net/minecraftforge/forge/1.12.2-14.23.5.2860/forge-1.12.2-14.23.5.2860-installer.jar'
 serverDownloadUrls['forge-1.16.5-36.2.27']='https://maven.minecraftforge.net/net/minecraftforge/forge/1.16.5-36.2.27/forge-1.16.5-36.2.27-installer.jar'
+serverDownloadUrls['forge-1.16.5-36.2.34']='https://maven.minecraftforge.net/net/minecraftforge/forge/1.16.5-36.2.34/forge-1.16.5-36.2.34-installer.jar'
 
 # Latest versions
 latestSnapshot='23w51b'

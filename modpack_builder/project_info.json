@@ -1,0 +1,506 @@
+[
+  {
+    "client_mod": false,
+    "project_id": "520110",
+    "slug": "iceberg",
+    "updated": "20240210_230306",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/iceberg"
+  },
+  {
+    "client_mod": false,
+    "project_id": "471288",
+    "slug": "sorceryfight",
+    "updated": "20240210_230308",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/sorceryfight"
+  },
+  {
+    "client_mod": false,
+    "project_id": "264231",
+    "slug": "ice-and-fire-dragons",
+    "updated": "20240210_230313",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/ice-and-fire-dragons"
+  },
+  {
+    "client_mod": false,
+    "project_id": "250419",
+    "slug": "enchantment-descriptions",
+    "updated": "20240210_230314",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/enchantment-descriptions"
+  },
+  {
+    "client_mod": false,
+    "project_id": "412525",
+    "slug": "libx",
+    "updated": "20240210_230315",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/libx"
+  },
+  {
+    "client_mod": false,
+    "project_id": "412082",
+    "slug": "supplementaries",
+    "updated": "20240210_230319",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/supplementaries"
+  },
+  {
+    "client_mod": false,
+    "project_id": "388800",
+    "slug": "polymorph",
+    "updated": "20240210_230320",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/polymorph"
+  },
+  {
+    "client_mod": false,
+    "project_id": "422301",
+    "slug": "sophisticated-backpacks",
+    "updated": "20240210_230322",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/sophisticated-backpacks"
+  },
+  {
+    "client_mod": false,
+    "project_id": "426558",
+    "slug": "alexs-mobs",
+    "updated": "20240210_230336",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/alexs-mobs"
+  },
+  {
+    "client_mod": false,
+    "project_id": "605375",
+    "slug": "idas",
+    "updated": "20240210_230344",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/idas"
+  },
+  {
+    "client_mod": false,
+    "project_id": "484377",
+    "slug": "feywild",
+    "updated": "20240210_230348",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/feywild"
+  },
+  {
+    "client_mod": false,
+    "project_id": "240630",
+    "slug": "just-enough-resources-jer",
+    "updated": "20240210_230351",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/just-enough-resources-jer"
+  },
+  {
+    "client_mod": false,
+    "project_id": "316873",
+    "slug": "charm-of-undying",
+    "updated": "20240210_230352",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/charm-of-undying"
+  },
+  {
+    "client_mod": false,
+    "project_id": "228525",
+    "slug": "bookshelf",
+    "updated": "20240210_230354",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/bookshelf"
+  },
+  {
+    "client_mod": false,
+    "project_id": "499980",
+    "slug": "selene",
+    "updated": "20240210_230355",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/selene"
+  },
+  {
+    "client_mod": false,
+    "project_id": "557999",
+    "slug": "brutal-bosses-dungeon",
+    "updated": "20240210_230408",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/brutal-bosses-dungeon"
+  },
+  {
+    "client_mod": false,
+    "project_id": "316582",
+    "slug": "corpse",
+    "updated": "20240210_230410",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/corpse"
+  },
+  {
+    "client_mod": false,
+    "project_id": "388172",
+    "slug": "geckolib",
+    "updated": "20240210_230411",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/geckolib"
+  },
+  {
+    "client_mod": false,
+    "project_id": "250363",
+    "slug": "autoreglib",
+    "updated": "20240210_230412",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/autoreglib"
+  },
+  {
+    "client_mod": false,
+    "project_id": "345854",
+    "slug": "villager-names",
+    "updated": "20240210_230413",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/villager-names"
+  },
+  {
+    "client_mod": false,
+    "project_id": "360203",
+    "slug": "guard-villagers",
+    "updated": "20240210_230415",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/guard-villagers"
+  },
+  {
+    "client_mod": false,
+    "project_id": "306770",
+    "slug": "patchouli",
+    "updated": "20240210_230415",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/patchouli"
+  },
+  {
+    "client_mod": false,
+    "project_id": "398521",
+    "slug": "farmers-delight",
+    "updated": "20240210_230417",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/farmers-delight"
+  },
+  {
+    "client_mod": false,
+    "project_id": "521480",
+    "slug": "skin-layers-3d",
+    "updated": "20240210_230418",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/skin-layers-3d"
+  },
+  {
+    "client_mod": false,
+    "project_id": "237307",
+    "slug": "cosmetic-armor-reworked",
+    "updated": "20240210_230419",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/cosmetic-armor-reworked"
+  },
+  {
+    "client_mod": false,
+    "project_id": "661477",
+    "slug": "scary-mobs-and-bosses",
+    "updated": "20240210_230421",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/scary-mobs-and-bosses"
+  },
+  {
+    "client_mod": false,
+    "project_id": "417430",
+    "slug": "caves-and-cliffs-backport",
+    "updated": "20240210_230423",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/caves-and-cliffs-backport"
+  },
+  {
+    "client_mod": false,
+    "project_id": "245755",
+    "slug": "waystones",
+    "updated": "20240210_230424",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/waystones"
+  },
+  {
+    "client_mod": false,
+    "project_id": "441706",
+    "slug": "cavebiomeapi",
+    "updated": "20240210_230426",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/cavebiomeapi"
+  },
+  {
+    "client_mod": false,
+    "project_id": "421850",
+    "slug": "yungs-api",
+    "updated": "20240210_230427",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/yungs-api"
+  },
+  {
+    "client_mod": false,
+    "project_id": "250498",
+    "slug": "mowzies-mobs",
+    "updated": "20240210_230429",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/mowzies-mobs"
+  },
+  {
+    "client_mod": false,
+    "project_id": "638417",
+    "slug": "obscure-api",
+    "updated": "20240210_230431",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/obscure-api"
+  },
+  {
+    "client_mod": false,
+    "project_id": "347381",
+    "slug": "village-spawn-point",
+    "updated": "20240210_230432",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/village-spawn-point"
+  },
+  {
+    "client_mod": false,
+    "project_id": "465066",
+    "slug": "expandability",
+    "updated": "20240210_230433",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/expandability"
+  },
+  {
+    "client_mod": false,
+    "project_id": "570319",
+    "slug": "human-companions",
+    "updated": "20240210_230435",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/human-companions"
+  },
+  {
+    "client_mod": false,
+    "project_id": "465575",
+    "slug": "yungs-better-strongholds",
+    "updated": "20240210_230437",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/yungs-better-strongholds"
+  },
+  {
+    "client_mod": false,
+    "project_id": "499826",
+    "slug": "advancement-plaques",
+    "updated": "20240210_230438",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/advancement-plaques"
+  },
+  {
+    "client_mod": false,
+    "project_id": "309927",
+    "slug": "curios",
+    "updated": "20240210_230439",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/curios"
+  },
+  {
+    "client_mod": false,
+    "project_id": "551586",
+    "slug": "l_ender-s-cataclysm",
+    "updated": "20240210_230443",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/l_ender-s-cataclysm"
+  },
+  {
+    "client_mod": false,
+    "project_id": "328085",
+    "slug": "create",
+    "updated": "20240210_230445",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/create"
+  },
+  {
+    "client_mod": false,
+    "project_id": "446017",
+    "slug": "linfox-stacked-dimensions-warden-edition",
+    "updated": "20240210_230448",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/linfox-stacked-dimensions-warden-edition"
+  },
+  {
+    "client_mod": false,
+    "project_id": "312353",
+    "slug": "artifacts",
+    "updated": "20240210_230450",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/artifacts"
+  },
+  {
+    "client_mod": false,
+    "project_id": "247560",
+    "slug": "oh-the-biomes-youll-go",
+    "updated": "20240210_230455",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/oh-the-biomes-youll-go"
+  },
+  {
+    "client_mod": false,
+    "project_id": "545467",
+    "slug": "sky-villages-forge",
+    "updated": "20240210_230457",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/sky-villages-forge"
+  },
+  {
+    "client_mod": false,
+    "project_id": "257814",
+    "slug": "creativecore",
+    "updated": "20240210_230458",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/creativecore"
+  },
+  {
+    "client_mod": false,
+    "project_id": "238222",
+    "slug": "jei",
+    "updated": "20240210_230459",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/jei"
+  },
+  {
+    "client_mod": false,
+    "project_id": "656977",
+    "slug": "moogs-voyager-structures",
+    "updated": "20240210_230506",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/moogs-voyager-structures"
+  },
+  {
+    "client_mod": false,
+    "project_id": "416089",
+    "slug": "simple-voice-chat",
+    "updated": "20240210_230509",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/simple-voice-chat"
+  },
+  {
+    "client_mod": false,
+    "project_id": "238372",
+    "slug": "neat",
+    "updated": "20240210_230510",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/neat"
+  },
+  {
+    "client_mod": false,
+    "project_id": "348521",
+    "slug": "cloth-config",
+    "updated": "20240210_230511",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/cloth-config"
+  },
+  {
+    "client_mod": false,
+    "project_id": "266890",
+    "slug": "playerrevive",
+    "updated": "20240210_230513",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/playerrevive"
+  },
+  {
+    "client_mod": false,
+    "project_id": "615352",
+    "slug": "better-village-forge",
+    "updated": "20240210_230517",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/better-village-forge"
+  },
+  {
+    "client_mod": false,
+    "project_id": "389665",
+    "slug": "yungs-better-mineshafts-forge",
+    "updated": "20240210_230519",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/yungs-better-mineshafts-forge"
+  },
+  {
+    "client_mod": false,
+    "project_id": "510089",
+    "slug": "yungs-better-dungeons",
+    "updated": "20240210_230522",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/yungs-better-dungeons"
+  },
+  {
+    "client_mod": false,
+    "project_id": "568157",
+    "slug": "jujutsu-animation",
+    "updated": "20240210_230523",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/jujutsu-animation"
+  },
+  {
+    "client_mod": false,
+    "project_id": "257356",
+    "slug": "in-control",
+    "updated": "20240210_230524",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/in-control"
+  },
+  {
+    "client_mod": false,
+    "project_id": "485681",
+    "slug": "chunky-pregenerator-forge",
+    "updated": "20240210_230525",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/chunky-pregenerator-forge"
+  },
+  {
+    "client_mod": false,
+    "project_id": "252848",
+    "slug": "natures-compass",
+    "updated": "20240210_230527",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/natures-compass"
+  },
+  {
+    "client_mod": false,
+    "project_id": "404183",
+    "slug": "endremastered",
+    "updated": "20240210_230528",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/endremastered"
+  },
+  {
+    "client_mod": true,
+    "project_id": "499046",
+    "slug": "replay-mod-for-forge",
+    "updated": "20240210_230528",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/replay-mod-for-forge"
+  },
+  {
+    "client_mod": false,
+    "project_id": "243121",
+    "slug": "quark",
+    "updated": "20240210_230530",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/quark"
+  },
+  {
+    "client_mod": false,
+    "project_id": "378802",
+    "slug": "structure-gel-api",
+    "updated": "20240210_230532",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/structure-gel-api"
+  },
+  {
+    "client_mod": false,
+    "project_id": "233019",
+    "slug": "ai-improvements",
+    "updated": "20240210_230533",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/ai-improvements"
+  },
+  {
+    "client_mod": false,
+    "project_id": "32274",
+    "slug": "journeymap",
+    "updated": "20240210_230534",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/journeymap"
+  },
+  {
+    "client_mod": false,
+    "project_id": "289380",
+    "slug": "obfuscate",
+    "updated": "20240210_230535",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/obfuscate"
+  },
+  {
+    "client_mod": false,
+    "project_id": "581652",
+    "slug": "orcz",
+    "updated": "20240210_230538",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/orcz"
+  },
+  {
+    "client_mod": false,
+    "project_id": "486392",
+    "slug": "flywheel",
+    "updated": "20240210_230541",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/flywheel"
+  },
+  {
+    "client_mod": false,
+    "project_id": "532727",
+    "slug": "library-ferret-forge",
+    "updated": "20240210_230542",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/library-ferret-forge"
+  },
+  {
+    "client_mod": false,
+    "project_id": "342584",
+    "slug": "collective",
+    "updated": "20240210_230543",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/collective"
+  },
+  {
+    "client_mod": false,
+    "project_id": "331936",
+    "slug": "citadel",
+    "updated": "20240210_230544",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/citadel"
+  },
+  {
+    "client_mod": false,
+    "project_id": "442508",
+    "slug": "when-dungeons-arise",
+    "updated": "20240210_230549",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/when-dungeons-arise"
+  },
+  {
+    "client_mod": false,
+    "project_id": "60089",
+    "slug": "mouse-tweaks",
+    "updated": "20240210_230552",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/mouse-tweaks"
+  }
+]

@@ -1,0 +1,7 @@
+SERVER_VERSION='forge-1.16.5-36.2.34'
+MOD_FRAMEWORK='forge'
+VANILLA_VERSION='1.16.5'
+SERVER_MODPACKS='tastethesno-jujutsu-kaisen-x-fantasy-modpack.zip'
+JAVA_VERSION='11'
+XMX_CONFIG='-Xmx3072M'
+XMS_CONFIG='-Xmx3072M'

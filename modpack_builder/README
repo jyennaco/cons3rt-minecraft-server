@@ -4,6 +4,13 @@ Prerequisites:
 * python3 installed with selenium
 * geckodriver installed for Selenium
 
+Optional:
+
+Seed your local with our project_info.json file:
+
+mkdir -p ~/.minecraft
+cp project_info.json ~/.minecraft
+
 Usage:
 
 1. Download a modpack from CurseForge (if it does not already have a server pack)
