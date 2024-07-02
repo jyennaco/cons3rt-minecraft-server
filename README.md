@@ -6,6 +6,10 @@ Latest Server release downloads:
 
 * https://www.minecraft.net/en-us/download/server
 
+Snapshots:
+
+* https://www.minecraft.net/en-us/article/minecraft-snapshot-24w21a
+
 For other release and snapshot download URLs, see the server-versions.sh file.
 
 * https://www.minecraft.net/en-us/article/minecraft-java-edition-1-20-2
