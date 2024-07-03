@@ -30,6 +30,7 @@ javaExe='/opt/java/jre/bin/java'
 java8Exe='/opt/java/jre8/bin/java'
 java11Exe='/opt/java/jre11/bin/java'
 java17Exe='/opt/java/jre17/bin/java'
+java21Exe='/opt/java/jre21/bin/java'
 screenExe='/usr/bin/screen'
 xmxConfig='-Xmx1024M'
 xmsConfig='-Xms1024M'
@@ -586,6 +587,9 @@ function set_java_version() {
             17)
                 serverJava="${java17Exe}"
                 ;;
+            21)
+                serverJava="${java21Exe}"
+                ;;
             *)
                 logErr "Unrecognized java version, expected 8, 11, or 17: ${JAVA_VERSION}"
                 return 1
@@ -609,6 +613,7 @@ function start_minecraft_server() {
     if [ ! -e ${java8Exe} ]; then logErr "${java8Exe} not found"; return 1; fi
     if [ ! -e ${java11Exe} ]; then logErr "${java11Exe} not found"; return 1; fi
     if [ ! -e ${java17Exe} ]; then logErr "${java17Exe} not found"; return 1; fi
+    if [ ! -e ${java21Exe} ]; then logErr "${java21Exe} not found"; return 1; fi
     if [ ! -e ${screenExe} ]; then logErr "${screenExe} not found"; return 1; fi
     if [ ! -f ${serverConfigFile} ]; then logErr "Minecraft world server version file not found: ${serverConfigFile}"; return 1; fi
 

@@ -12,6 +12,8 @@
 #     ./scripts/downloadJava.sh
 #
 
+. /opt/Minecraft_Servers/scripts/common.sh
+
 logInfo "Downloading java..."
 javaDir='/opt/java'
 javaSymlink="${javaDir}/jre"
