@@ -9,6 +9,7 @@ Latest Server release downloads:
 Snapshots:
 
 * https://www.minecraft.net/en-us/article/minecraft-snapshot-24w21a
+  * https://www.minecraft.net/en-us/article/minecraft-snapshot-24w34a
 
 For other release and snapshot download URLs, see the server-versions.sh file.
 
