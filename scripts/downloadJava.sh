@@ -25,6 +25,7 @@ javaSymlink="${javaDir}/jre"
 
 # Java major version, defaults to 25
 javaMajorVersion="${1:-25}"
+javaVersionSymlink="${javaDir}/jre${javaMajorVersion}"
 
 if [ ! -d ${javaDir} ]; then
     logInfo "Creating java directory: ${javaDir}"
@@ -103,14 +104,16 @@ logInfo "Computed java directory name: ${versionDirectoryName}"
 versionDirectory="${javaDir}/${versionDirectoryName}"
 if [ ! -d ${versionDirectory} ]; then logErr "Java version directory not found: ${versionDirectory}"; exit 1; fi
 
-# Create the symlink
-if [ -e ${javaSymlink} ]; then
-    logInfo "Removing existing symlink: ${javaSymlink}"
-    rm -f ${javaSymlink}
-fi
-logInfo "Creating new java symlink [${javaSymlink}] pointing to: ${versionDirectory}"
-ln -sf ${versionDirectory} ${javaSymlink}
-if [ $? -ne 0 ]; then logErr "Problem creating java symlink: ${javaSymlink} to directory: ${versionDirectory}"; exit 1; fi
+# Create the generic and version-specific symlinks
+for symlink in "${javaSymlink}" "${javaVersionSymlink}"; do
+    if [ -e ${symlink} ] || [ -L ${symlink} ]; then
+        logInfo "Removing existing symlink: ${symlink}"
+        rm -f ${symlink}
+    fi
+    logInfo "Creating new java symlink [${symlink}] pointing to: ${versionDirectory}"
+    ln -sf ${versionDirectory} ${symlink}
+    if [ $? -ne 0 ]; then logErr "Problem creating java symlink: ${symlink} to directory: ${versionDirectory}"; exit 1; fi
+done
 
 logInfo "Completed downloading and installing Java successfully!"
 
