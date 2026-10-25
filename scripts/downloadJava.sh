@@ -63,7 +63,9 @@ queryStrings+=("${queryStringLinuxX64}")
 # Download the binaries using the provided query strings
 for queryString in "${queryStrings[@]}"; do
     apiUrl="${baseUrl}/${queryString}"
-    fileName=$(curl -sI ${apiUrl} | grep 'Location' | awk '{print $2}' | awk -F / '{print $NF}' | tr -d '\r')
+    # The header name is "location" over HTTP/2 and in the Adoptium API's current responses, so match case-insensitively
+    fileName=$(curl -sI ${apiUrl} | grep -i '^location:' | awk '{print $2}' | awk -F / '{print $NF}' | tr -d '\r')
+    if [ -z "${fileName}" ]; then logErr "Unable to determine the java file name from the redirect of: ${apiUrl}"; exit 1; fi
     existingFile="${javaDir}/${fileName}"
     logInfo "Checking for existing file: [${existingFile}]"
     if [ -f ${existingFile} ]; then
