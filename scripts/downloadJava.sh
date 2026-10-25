@@ -9,15 +9,22 @@
 # Reference: https://api.adoptium.net/q/swagger-ui/#/Binary/getBinary
 #
 # Usage:
-#     ./scripts/downloadJava.sh
+#     ./scripts/downloadJava.sh [javaMajorVersion]
+#
+# Arguments:
+#     javaMajorVersion    Java major (feature) version to download, defaults to 25
+#
+# Java is downloaded and extracted to ${HOME}/java
 #
 
 . /opt/Minecraft_Servers/scripts/common.sh
 
 logInfo "Downloading java..."
-javaDir='/opt/java'
+javaDir="${HOME}/java"
 javaSymlink="${javaDir}/jre"
-profileScript='/etc/profile.d/java.sh'
+
+# Java major version, defaults to 25
+javaMajorVersion="${1:-25}"
 
 if [ ! -d ${javaDir} ]; then
     logInfo "Creating java directory: ${javaDir}"
@@ -39,7 +46,7 @@ res=0
 baseUrl="https://api.adoptium.net/v3/binary/latest"
 
 # Parameters for Linux x64
-feature_version='17'
+feature_version="${javaMajorVersion}"
 release_type='ga'
 os='linux'
 arch='x64'
@@ -104,12 +111,6 @@ fi
 logInfo "Creating new java symlink [${javaSymlink}] pointing to: ${versionDirectory}"
 ln -sf ${versionDirectory} ${javaSymlink}
 if [ $? -ne 0 ]; then logErr "Problem creating java symlink: ${javaSymlink} to directory: ${versionDirectory}"; exit 1; fi
-
-# Create the java profile.d script
-logInfo "Creating java profile.d script: ${profileScript}"
-echo 'export JAVA_HOME=/opt/java/jre' > ${profileScript}
-echo 'export PATH=${JAVA_HOME}/bin:${PATH}' >> ${profileScript}
-. ${profileScript}
 
 logInfo "Completed downloading and installing Java successfully!"
 
