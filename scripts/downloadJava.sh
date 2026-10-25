@@ -91,14 +91,11 @@ logInfo "Extracting java file: ${fileName}"
 tar -xvzf ${fileName}
 if [ $? -ne 0 ]; then logErr "Problem extracting the downloaded java file: ${fileName}"; exit 1; fi
 
-# Get the specific version
-specificVersion=$(echo "${fileName}" | awk -F _ '{print $5}')
-specificVersionModifier=$(echo "${fileName}" | awk -F _ '{print $6}' | awk -F . '{print $1}')
-versionDirectoryName="jdk-${specificVersion}+${specificVersionModifier}-jre"
-
-logInfo "Found specific version: ${specificVersion}"
-logInfo "Found specific version modifier: ${specificVersionModifier}"
-logInfo "Computed java directory name: ${versionDirectoryName}"
+# Get the directory the archive extracted to, read from the archive because its name differs
+# by version: jdk-25.0.5+8-jre, jdk-11.0.32.1+1-jre, but jdk8u504-b01-jre for Java 8
+versionDirectoryName=$(tar -tzf ${fileName} | head -n 1 | cut -d/ -f1)
+if [ -z "${versionDirectoryName}" ]; then logErr "Unable to determine the java directory name from the archive: ${fileName}"; exit 1; fi
+logInfo "Found java directory name in the archive: ${versionDirectoryName}"
 
 # Ensure the version directory was found
 versionDirectory="${javaDir}/${versionDirectoryName}"
