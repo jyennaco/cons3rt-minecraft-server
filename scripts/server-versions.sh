@@ -25,6 +25,7 @@ serverDownloadUrls['23w33a']='https://piston-data.mojang.com/v1/objects/0254dde4
 serverDownloadUrls['23w51b']='https://piston-data.mojang.com/v1/objects/d443ec98f3f3ee2dc92e0788d6d83d74844feb4f/server.jar'
 serverDownloadUrls['24w21a']='https://piston-data.mojang.com/v1/objects/743d74805b64f83052fe449993f42182f76b129e/server.jar'
 serverDownloadUrls['24w34a']='https://piston-data.mojang.com/v1/objects/ff16e26392a5ced7cfe52ffdc5461cd646b9b65d/server.jar'
+serverDownloadUrls['26.4-snapshot-5']='https://piston-data.mojang.com/v1/objects/ed041232700614aeaaf72a6ea88b7f58ca3f8e4a/server.jar'
 
 # Releases
 serverDownloadUrls['1.12.2']='https://launcher.mojang.com/mc/game/1.12.2/server/886945bfb2b978778c3a0288fd7fab09d315b25f/server.jar'
@@ -43,6 +44,7 @@ serverDownloadUrls['1.20.3']='https://piston-data.mojang.com/v1/objects/4fb536bf
 serverDownloadUrls['1.20.4']='https://piston-data.mojang.com/v1/objects/8dd1a28015f51b1803213892b50b7b4fc76e594d/server.jar'
 serverDownloadUrls['1.21.0']='https://piston-data.mojang.com/v1/objects/450698d1863ab5180c25d7c804ef0fe6369dd1ba/server.jar'
 serverDownloadUrls['1.21.1']='https://piston-data.mojang.com/v1/objects/59353fb40c36d304f2035d51e7d6e6baa98dc05c/server.jar'
+serverDownloadUrls['26.3']='https://piston-data.mojang.com/v1/objects/33680f5f2ac32864d6d7cf5e56a705fdb3e05f4c/server.jar'
 
 
 # Fabric Versions
@@ -58,8 +60,8 @@ serverDownloadUrls['forge-1.16.5-36.2.27']='https://maven.minecraftforge.net/net
 serverDownloadUrls['forge-1.16.5-36.2.34']='https://maven.minecraftforge.net/net/minecraftforge/forge/1.16.5-36.2.34/forge-1.16.5-36.2.34-installer.jar'
 
 # Latest versions
-latestSnapshot='24w34a'
-latestRelease='1.21.1'
+latestSnapshot='26.4-snapshot-5'
+latestRelease='26.3'
 
 # Latest download URLs
 latestSnapshotDownloadUrl="${serverDownloadUrls[${latestSnapshot}]}"
